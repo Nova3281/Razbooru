@@ -15,7 +15,7 @@
   Original Zenbooru components remain under the MIT License.
   ========================================================================== 
 -->
-<meta name="referrer" content="no-referrer"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"><title>Loading... | v1.406</title><link rel="shortcut icon" href="data:,"><style>
+<meta name="referrer" content="no-referrer"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"><title>Loading... | v1.407</title><link rel="shortcut icon" href="data:,"><style>
 /* ==========================================================================
    LANGUAGE: CSS (Cascading Style Sheets)
    FUNCTION: This section controls the visual appearance of the application. 
@@ -597,16 +597,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   padding-top: 0;
   border: 0.2em #f33 dotted;
 }
-#new_site {
-  display: flex;
-}
-#new_site label {
-  flex: 1;
-  align-self: center;
-}
-#new_site_address {
-  flex: 2;
-}
 .site {
   margin: 0.5em 0 0.5em 0;
   display: flex;
@@ -626,10 +616,11 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .site_address {
   flex: 2;
   height: 100%;
-}
-.site_remove {
-  height: 100%;
-  background: rgba(255,51,51,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: monospace;
+  font-size: 110%;
 }
 .view {
   z-index: 10;
@@ -1198,10 +1189,8 @@ this.S = function(a, b) {
         if (size == null) {
           size = 100; // e621 allows up to 320 max limit
         }
-        var auth = (window.sites[site] && window.sites[site].username && window.sites[site].api_key) 
-                   ? "&login=" + encodeURIComponent(window.sites[site].username) + "&api_key=" + encodeURIComponent(window.sites[site].api_key) : "";
         // e621 pagination is 1-indexed
-        return site + "/posts.json?limit=" + size + "&page=" + (page + 1) + "&tags=" + tags + auth;
+        return site + "/posts.json?limit=" + size + "&page=" + (page + 1) + "&tags=" + tags;
       },
       results: function(response, size) {
         var data, files;
@@ -1239,8 +1228,6 @@ this.S = function(a, b) {
           source: (post.sources && post.sources.length > 0) ? post.sources[0] : void 0,
           uploader: post.uploader_id,
           created: new Date(post.created_at),
-          score: post.score ? post.score.total : void 0,
-          favorites: post.fav_count,
           height: post.file ? post.file.height : void 0,
           width: post.file ? post.file.width : void 0,
           page: post.id != null ? "/posts/" + post.id : void 0,
@@ -1892,23 +1879,6 @@ this.S = function(a, b) {
       action('#interface_side', 'change', function() {
         return window.setInterfaceSide(this.value);
       });
-      action('#new_site_address', 'change', function() {
-        return this.blur();
-      });
-      action('#new_site_address', 'blur', function() {
-        var address, site;
-        if (this.value !== '') {
-          address = this.value.match(window.URI_SCHEME) == null ? 'http://' + this.value : this.value;
-          this.value = '';
-          site = {};
-          site[address] = window.sites[address] = {
-            enabled: false
-          };
-          window.saveSites();
-          window.addSites(site);
-          return window.newSite(address);
-        }
-      });
       action('#third_party_site_disclaimer_dismiss', 'click', function() {
         return window.dismissThirdPartySiteDisclaimer();
       });
@@ -2075,34 +2045,9 @@ this.S = function(a, b) {
               return window.saveSites();
             }
           }
-        }), make('input', {
+        }), make('div', {
           "class": 'site_address',
-          type: 'url',
-          value: address || '',
-          events: {
-            change: function() {
-              return this.blur();
-            },
-            blur: function() {
-              delete window.sites[address];
-              delete window.moreResults[address];
-              this.parentElement.setAttribute('data-site', this.value);
-              this.setAttribute('value', this.value);
-              window.saveSites();
-              return window.newSite(this.value);
-            }
-          }
-        }), make('button', {
-          "class": 'site_remove'
-        }, '?', {
-          events: {
-            click: function() {
-              site = this.parentElement;
-              site.parentElement.removeChild(site);
-              delete window.sites[address];
-              return window.saveSites();
-            }
-          }
+          innerText: address
         }), make('div', {
           style: 'display: flex; width: 100%; padding: 0.2em; box-sizing: border-box; background: rgba(0,0,0,0.3);'
         }, make('input', {
@@ -2137,7 +2082,7 @@ this.S = function(a, b) {
       for (site in sites) {
         _fn(site, sites[site]);
       }
-      return S('#sites').insertBefore(newSites, S('#new_site').nextSibling);
+      return S('#sites').appendChild(newSites);
     };
     this.newSite = function(site) {
       var site_status;
@@ -3035,7 +2980,7 @@ this.getBlob = function(url, callbacks) {
         }
         return _results;
       })())[0] || '', (counter + more) + " " + (window.currentFile.checksum || 'Loading...') + " [" + (window.contentZoom || 100) + "%]") : "No results...";
-      return document.title = baseTitle + " | v1.406";
+      return document.title = baseTitle + " | v1.407";
     };
     this.updateInfo = function() {
       var data, has_notes, id, prop, props, result, site, tagsBody, url, value, values, xhr, _fn, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref1, _ref2, _ref3, _ref4, _results;
@@ -3513,7 +3458,7 @@ this.getBlob = function(url, callbacks) {
                sidebar elements, tables, buttons, inputs, date pickers, and 
                the spinning loading icon that the user interacts with.
      ========================================================================== -->
-<div id="version-display">v1.406</div><div id="loading-file" class="center"><svg class="center" viewBox="0 0 32 32"><path fill="rgba(0,0,0,0.2)" stroke="rgba(0,0,0,0.8)" stroke-width="0.1px" d="M16 0 A16 16 0 0 0 16 32 A16 16 0 0 0 16 0 M16 4 A12 12 0 0 1 16 28 A12 12 0 0 1 16 4"></path></svg><svg class="center spin" viewBox="0 0 32 32"><path fill="white" d="M16 0 A16 16 0 0 1 32 16 L28 16 A12 12 0 0 0 16 4z"></path></svg><div id="loading-file-percent" class="center">Connecting...</div></div><div id="loading-results" class="hide" style="width: 0%"></div><div id="messages" class="frame fade-in-out hide"></div><div id="settings" class="frame hide"><button id="close_settings" title="Close settings">Settings</button><h1>Interface</h1><p><label for="interface_side">Display sidebar on the </label><select id="interface_side"><option value="left">left</option><option value="right">right</option></select></p><h1>Data Management</h1><div style="display: flex; gap: 0.5em; margin-bottom: 1em;"><button id="export_settings" style="flex: 1; padding: 0.5em; background-color: rgba(220,20,60,0.2); border-radius: 0.2em; font-weight: bold; cursor: pointer;">?? Export Config</button><button id="import_settings" style="flex: 1; padding: 0.5em; background-color: rgba(220,20,60,0.2); border-radius: 0.2em; font-weight: bold; cursor: pointer;">?? Import Config</button><input type="file" id="import_file" style="display: none;" accept=".json"></div><h1>Sites</h1><div id="third_party_site_disclaimer" class="fade-out"><h2>Third-party site disclaimer</h2><p class="text">The default image board in Razbooru is curated to only contain images that follow <a href="https://play.google.com/about/developer-content-policy.html" target="_blank">Google Play's Developer Content Policy</a>. Razbooru (like most web browsing applications) allows the user to enter the addresses of third-party websites outside of the application (or its developers) control. Razbooru contains a rating filter, but this relies upon how the websites themselves rate their content. Due to this the developers of Razbooru can not be held liable if content retrieved from third-party websites is offensive or illegal in your territory.</p><button id="third_party_site_disclaimer_dismiss">I understand, senpai.</button></div><div id="sites"><div id="new_site"><input id="new_site_address" type="url" placeholder="Add new site: example.com"></div></div></div><div id="sidebar" class="frame hide"><a id="info-version" href="http://zenbooru.org" target="_blank">Razbooru v1.406</a><button id="open_settings" title="Open settings">Settings</button><br /><br /><input id="search" type="search" placeholder="Search: tag_a tag_b tag_c"><input id="search_meta" type="search" placeholder="Meta: user:bob rating:safe"><input id="search_exclude" type="search" placeholder="Exclude: guro scat"><p><label for="highest_rating">Highest Rating: </label><select id="highest_rating"><option value="explicit">Explicit</option><option value="questionable">Questionable</option><option value="safe" selected="selected">Safe</option></select></p><p><label for="sort_order">Sort By: </label><select id="sort_order"><option value="default" selected="selected">Date Uploaded</option><option value="score">Score</option><option value="favorites">Favorites</option></select></p>
+<div id="version-display">v1.407</div><div id="loading-file" class="center"><svg class="center" viewBox="0 0 32 32"><path fill="rgba(0,0,0,0.2)" stroke="rgba(0,0,0,0.8)" stroke-width="0.1px" d="M16 0 A16 16 0 0 0 16 32 A16 16 0 0 0 16 0 M16 4 A12 12 0 0 1 16 28 A12 12 0 0 1 16 4"></path></svg><svg class="center spin" viewBox="0 0 32 32"><path fill="white" d="M16 0 A16 16 0 0 1 32 16 L28 16 A12 12 0 0 0 16 4z"></path></svg><div id="loading-file-percent" class="center">Connecting...</div></div><div id="loading-results" class="hide" style="width: 0%"></div><div id="messages" class="frame fade-in-out hide"></div><div id="settings" class="frame hide"><button id="close_settings" title="Close settings">Settings</button><h1>Interface</h1><p><label for="interface_side">Display sidebar on the </label><select id="interface_side"><option value="left">left</option><option value="right">right</option></select></p><h1>Data Management</h1><div style="display: flex; gap: 0.5em; margin-bottom: 1em;"><button id="export_settings" style="flex: 1; padding: 0.5em; background-color: rgba(220,20,60,0.2); border-radius: 0.2em; font-weight: bold; cursor: pointer;">?? Export Config</button><button id="import_settings" style="flex: 1; padding: 0.5em; background-color: rgba(220,20,60,0.2); border-radius: 0.2em; font-weight: bold; cursor: pointer;">?? Import Config</button><input type="file" id="import_file" style="display: none;" accept=".json"></div><h1>Sites</h1><div id="third_party_site_disclaimer" class="fade-out"><h2>Third-party site disclaimer</h2><p class="text">The default image board in Razbooru is curated to only contain images that follow <a href="https://play.google.com/about/developer-content-policy.html" target="_blank">Google Play's Developer Content Policy</a>. Razbooru (like most web browsing applications) allows the user to enter the addresses of third-party websites outside of the application (or its developers) control. Razbooru contains a rating filter, but this relies upon how the websites themselves rate their content. Due to this the developers of Razbooru can not be held liable if content retrieved from third-party websites is offensive or illegal in your territory.</p><button id="third_party_site_disclaimer_dismiss">I understand, senpai.</button></div><div id="sites"></div></div><div id="sidebar" class="frame hide"><a id="info-version" href="http://zenbooru.org" target="_blank">Razbooru v1.407</a><button id="open_settings" title="Open settings">Settings</button><br /><br /><input id="search" type="search" placeholder="Search: tag_a tag_b tag_c"><input id="search_meta" type="search" placeholder="Meta: user:bob rating:safe"><input id="search_exclude" type="search" placeholder="Exclude: guro scat"><p><label for="highest_rating">Highest Rating: </label><select id="highest_rating"><option value="explicit">Explicit</option><option value="questionable">Questionable</option><option value="safe" selected="selected">Safe</option></select></p><p><label for="sort_order">Sort By: </label><select id="sort_order"><option value="default" selected="selected">Date Uploaded</option><option value="score">Score</option><option value="favorites">Favorites</option></select></p>
 
 <p style="margin-bottom: 0;"><label>Filters (Check to Enable): </label></p>
 <div style="display: flex; flex-direction: row; gap: 0.5em; justify-content: center; align-items: center; margin-bottom: 0.5em;">
