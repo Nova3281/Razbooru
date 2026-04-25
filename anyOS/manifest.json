@@ -1,0 +1,19 @@
+{
+"manifest_version": 2,
+
+"name": "anyOS Commands",
+"description": "This extension allows anyOS apps to execute some shell/system commands",
+"version": "1.0",
+"background": { "scripts": [ "background.js" ] } ,
+"content_scripts":
+	[{
+	"matches": [ "<all_urls>" ],
+	"js": [ "content.js" ]
+	}],
+"permissions":
+	[
+	"nativeMessaging",
+	"downloads.shelf",
+	"downloads"
+	]
+}

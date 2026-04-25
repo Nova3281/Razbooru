@@ -1,0 +1,3505 @@
+<!DOCTYPE html><html lang="en"><head>
+<!-- 
+  ==========================================================================
+  RAZBOORU (Formerly Zenbooru)
+  ==========================================================================
+  This project is a heavily modified fork of the Zenbooru viewer.
+  Original Zenbooru created by the Zenbooru Developers.
+  Original Website: http://zenbooru.org
+  
+  Licensed under the MIT License.
+  ========================================================================== 
+-->
+<meta name="referrer" content="no-referrer"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"><title>Loading... | v1.405</title><link rel="shortcut icon" href="data:,"><style>
+/* ==========================================================================
+   LANGUAGE: CSS (Cascading Style Sheets)
+   FUNCTION: This section controls the visual appearance of the application. 
+             It handles colors (mostly the dark theme), layout widths, 
+             animations (like the loading spinner), and the styling of the 
+             sidebar and thumbnail rows.
+   ========================================================================== */
+html,
+body {
+  color: #bfbfbf;
+  background: #000;
+  font-family: sans-serif;
+  margin: 0;
+  text-align: center;
+  -webkit-user-select: none;
+  user-select: none;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  cursor: default;
+}
+body {
+  text-shadow: 1px 1px 1px #000, -1px 1px 1px #000, 1px -1px 1px #000, -1px -1px 1px #000, 0 0 0.5em #000, 0 0 0.5em #000;
+}
+tbody tr:nth-child(even) {
+  background-color: rgba(128,128,128,0.1);
+}
+thead {
+  background-color: rgba(128,128,128,0.3);
+}
+td {
+  padding: 0 0.3em 0 0.3em;
+}
+h1,
+h2,
+th,
+label {
+  color: #fff;
+}
+h1,
+h2,
+th {
+  text-align: center;
+}
+:link,
+:visited,
+input,
+button,
+select {
+  color: #fff;
+  text-decoration: none;
+  transition: all 0.7s ease-in-out;
+  text-shadow: 1px 1px 1px #000, -1px 1px 1px #000, 1px -1px 1px #000, -1px -1px 1px #000;
+}
+:link,
+:visited,
+button,
+input[type="search"]::-webkit-search-cancel-button {
+  text-shadow: 1px 1px 1px #000, -1px 1px 1px #000, 1px -1px 1px #000, -1px -1px 1px #000, 0 0 0.5em #000, 0 0 0.5em #000;
+}
+:link:hover,
+:visited:hover,
+button:hover:not(:disabled),
+select:hover:not(:disabled),
+input[type="checkbox"]:hover:after,
+input[type="search"]::-webkit-search-cancel-button:hover {
+  color: #dc143c;
+  transition: all 0.1s ease-in-out;
+  text-shadow: 1px 1px 1px #5c0819, -1px 1px 1px #5c0819, 1px -1px 1px #5c0819, -1px -1px 1px #5c0819, 0 0 0.5em #5c0819, 0 0 0.5em #5c0819;
+}
+::-webkit-scrollbar {
+  width: 0.5em;
+  height: 0.5em;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 0.2em;
+  background: rgba(255,255,255,0.2);
+  transition: all 0.7s ease-in-out;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(220,20,60,0.6);
+  transition: all 0.1s ease-in-out;
+}
+:focus {
+  outline: none;
+}
+:disabled {
+  cursor: not-allowed;
+  color: #808080;
+}
+input[type="text"],
+input[type="search"],
+input[type="password"],
+input[type="url"],
+input[type="number"],
+input[type="date"],
+select,
+input[type="checkbox"],
+button {
+  -webkit-appearance: none;
+  font-size: 100%;
+  padding: 0.3em;
+  border: none;
+}
+input[type="text"],
+input[type="search"],
+input[type="password"],
+input[type="url"],
+input[type="number"],
+input[type="date"],
+select,
+input[type="checkbox"] {
+  background-color: rgba(0,0,0,0.6);
+  box-shadow: inset 0 0 1em rgba(0,0,0,0.2), 0 0 0.25em rgba(255,255,255,0.2);
+  border-radius: 0.2em;
+}
+input[type="text"]:focus,
+input[type="search"]:focus,
+input[type="password"]:focus,
+input[type="url"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+select:focus,
+input[type="checkbox"]:focus {
+  box-shadow: inset 0 0 1em rgba(0,0,0,0.2), 0 0 0.25em #dc143c;
+}
+input[type="text"],
+input[type="search"],
+input[type="password"],
+input[type="url"],
+input[type="number"],
+input[type="date"] {
+  cursor: text;
+}
+select,
+button,
+input[type="checkbox"],
+label[for] {
+  cursor: pointer;
+}
+table {
+  width: 100%;
+}
+button {
+  background: none;
+}
+select {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' height='32px' width='32px'><text x='16' y='18' fill='white' font-size='13' style='text-shadow: 1px  1px 1px black, -1px  1px 1px black, 1px -1px 1px black, -1px -1px 1px black'>?</text></svg>");
+  background-repeat: no-repeat;
+  background-position: top right;
+  padding-right: 1em;
+  margin: 0.2em 0;
+}
+select:hover:not(:disabled) {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' height='32px' width='32px'><text x='16' y='18' fill='%23dc143c' font-size='13' style='text-shadow: 1px  1px 1px %235c0819, -1px  1px 1px %235c0819, 1px -1px 1px %235c0819, -1px -1px 1px %235c0819, 0    0   0.5em %235c0819, 0    0   0.5em %235c0819'>?</text></svg>");
+}
+input[type="checkbox"]:not(.native-check) {
+  width: 1.75em;
+  height: 1.75em;
+  color: #fff;
+  padding: 0;
+}
+input[type="checkbox"]:not(.native-check):after {
+  transition: all 0.1s ease-in-out;
+  content: '?';
+  opacity: 0;
+  font-size: 200%;
+  position: relative;
+  top: -0.1em;
+  left: 0.05em;
+  overflow: hidden;
+}
+input[type="checkbox"]:not(.native-check):checked:after {
+  opacity: 1;
+}
+.native-check {
+  -webkit-appearance: checkbox !important;
+  appearance: checkbox !important;
+  width: auto !important;
+  height: auto !important;
+  box-shadow: none !important;
+  cursor: pointer;
+}
+.native-check:after {
+  display: none !important;
+}
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  cursor: pointer;
+  transition: all 0.7s ease-in-out;
+}
+input[type="search"]::-webkit-search-cancel-button:after {
+  content: '?';
+}
+input[type="number"]:not(#min_score):not(#min_favs) {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1'><rect x='0' y='0' width='100%' height='100%' fill='%23dc143c'/></svg>");
+  background-repeat: no-repeat;
+  background-size: 75% 100%;
+}
+input[type="date"] {
+  -webkit-appearance: auto;
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+.fade-in-out,
+.fade-in,
+.fade-out.hide {
+  transition: opacity 0.3s ease-in-out;
+}
+.fade-in.hide,
+.fade-out {
+  transition: none;
+}
+.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+.close {
+  display: none;
+}
+.center {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+}
+.emoji {
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "NotoColorEmoji", "Segoe UI Symbol", "Android Emoji", "EmojiSymbols";
+}
+.right {
+  direction: ltr;
+  text-align: right;
+  right: 0em;
+}
+.left {
+  direction: rtl;
+  text-align: left;
+  left: 0em;
+}
+.right *,
+.left * {
+  direction: initial;
+}
+.frame {
+  z-index: 20;
+  position: fixed;
+  padding: 0.5em;
+  transition: all 0.4s ease-in-out;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  box-sizing: border-box;
+  background: rgba(0,0,0,0.6);
+  box-shadow: 0 0 0.5em #000;
+}
+.frame p {
+  text-align: center;
+}
+.frame.top {
+  left: 0;
+  right: 0;
+  top: 0;
+}
+.frame.top.hide {
+  -webkit-transform: translate3d(0, -100%, 0);
+  transform: translate3d(0, -100%, 0);
+}
+.frame.right,
+.frame.left {
+  top: 0;
+  bottom: 0;
+  max-height: 100%;
+  width: auto;
+  min-width: 15em;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.frame.right {
+  right: 0em;
+}
+.frame.right.hide {
+  -webkit-transform: translate3d(10em, 0, 0);
+  transform: translate3d(10em, 0, 0);
+}
+.frame.left {
+  left: 0em;
+}
+.frame.left.hide {
+  -webkit-transform: translate3d(-10em, 0, 0);
+  transform: translate3d(-10em, 0, 0);
+}
+.frame.hide {
+  z-index: 15;
+}
+.error {
+  color: #f33;
+  background: #f33;
+}
+.warn {
+  color: #fe3;
+  background: #fe3;
+}
+.info {
+  color: #38f;
+  background: #38f;
+}
+.okay {
+  color: #7f3;
+  background: #7f3;
+}
+.included {
+  background: rgba(220,20,60,0.2);
+}
+.excluded {
+  background: rgba(255,51,51,0.2);
+}
+.spin {
+  -webkit-animation: spin 1s infinite linear;
+  animation: spin 1s infinite linear;
+  -webkit-transform-origin: 50% 50%;
+  transform-origin: 50% 50%;
+}
+@-moz-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@-o-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+#loading-results {
+  z-index: 99;
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #dc143c;
+  height: 0.2em;
+  transition: all 0.7s ease-in-out;
+}
+#loading-results.hide {
+  transition-property: opacity;
+}
+#messages {
+  z-index: 98;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+#loading-file {
+  transition: opacity 0.3s ease-in-out;
+  z-index: 10;
+  pointer-events: none;
+}
+#loading-file svg {
+  width: 50%;
+  height: 50%;
+}
+@media (min-width: 30em) and (min-height: 30em) {
+  #loading-file {
+    font-size: 200%;
+  }
+  #loading-file svg {
+    width: 35%;
+    height: 35%;
+  }
+}
+#loading-file.hide .spin {
+  display: none;
+}
+#loading-file-percent {
+  color: #fff;
+  height: 0;
+}
+.loading {
+  position: relative;
+  border: 0.1em solid rgba(0,0,0,0.2);
+  border-left-color: #fff;
+  -webkit-animation: spin 1s infinite linear;
+  animation: spin 1s infinite linear;
+  border-radius: 50%;
+  width: 1em;
+  height: 1em;
+}
+#sidebar {
+  width: 25em;
+}
+@media (max-width: 30em) {
+  #sidebar {
+    width: 80%;
+  }
+}
+.left #open_settings:before {
+  content: '= ';
+}
+.right #open_settings:after {
+  content: ' =';
+}
+#info-version {
+  font-size: 75%;
+  line-height: 3em;
+}
+.left #info-version {
+  float: right;
+}
+.right #info-version {
+  float: left;
+}
+#search, #search_meta, #search_exclude {
+  width: 100%;
+  margin-bottom: 0.2em;
+}
+#display-options tbody th {
+  width: 40%;
+  text-align: right;
+}
+#display-file {
+  float: left;
+}
+#display-file-default {
+  padding-left: 1em;
+}
+@media (max-width: 30em) {
+  #display-file-default {
+    display: block;
+    font-size: 75%;
+  }
+}
+#display-filters {
+  text-align: center;
+}
+@media (max-width: 30em) {
+  #display-filters button {
+    display: block;
+    margin: 0 auto;
+  }
+}
+@media (max-width: 30em) {
+  #tags-name,
+  #excluded_tags-name {
+    display: block;
+    text-align: center;
+  }
+}
+#tags-total,
+#excluded_tags-total,
+.tag-total {
+  text-align: right;
+}
+@media (max-width: 30em) {
+  #tags-total,
+  #excluded_tags-total,
+  .tag-total {
+    display: none;
+  }
+}
+.tag-exclude button,
+.tag-include button {
+  font-size: 125%;
+  font-family: monospace;
+  width: 100%;
+}
+@media (max-width: 30em) {
+  .tag-exclude,
+  .tag-include {
+    display: none;
+  }
+}
+.tag-name,
+.note-body {
+  width: 100%;
+  max-width: 0;
+  word-wrap: break-word;
+}
+.tag-name button,
+.note-body button {
+  width: 100%;
+}
+#results-site td,
+#results-uploaded td,
+#results-uploader td,
+#results-source td,
+#results-score td,
+#results-favorites td {
+  max-width: 0;
+  word-wrap: break-word;
+  text-align: center;
+}
+#topbar {
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+#thumbs {
+  white-space: nowrap;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+}
+#thumbs .thumb {
+  cursor: pointer;
+  box-sizing: border-box;
+  vertical-align: bottom;
+  padding-left: 0.5em;
+  padding-right: 0.5em;
+  height: 5em;
+  width: 5em;
+  border-radius: 0.2em;
+}
+#thumbs .thumb img {
+  max-height: 100%;
+  max-width: 100%;
+  box-shadow: 0 0 0.5em #000;
+  transition: all 0.3s ease-in-out;
+}
+#thumbs .thumb:hover img {
+  box-shadow: 0 0 0.5em #dc143c;
+}
+#settings {
+  max-width: 25em;
+  width: 100%;
+}
+#settings td button {
+  width: 100%;
+}
+#settings.hide {
+  pointer-events: none;
+}
+.left #close_settings:before {
+  content: '? ';
+}
+.right #close_settings:after {
+  content: ' ?';
+}
+#third_party_site_disclaimer {
+  z-index: 9999;
+  max-width: 100%;
+  box-sizing: border-box;
+  position: absolute;
+  left: 0.5em;
+  right: 0.5em;
+  background: rgba(0,0,0,0.8);
+  padding: 0.5em;
+  padding-top: 0;
+  border: 0.2em #f33 dotted;
+}
+#new_site {
+  display: flex;
+}
+#new_site label {
+  flex: 1;
+  align-self: center;
+}
+#new_site_address {
+  flex: 2;
+}
+.site {
+  margin: 0.5em 0 0.5em 0;
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
+}
+.site:nth-child(even) {
+  background-color: rgba(128,128,128,0.1);
+}
+.site_enabled,
+.site_status {
+  text-align: center;
+  padding: 0.5em;
+  width: 100%;
+  background: none;
+}
+.site_address {
+  flex: 2;
+  height: 100%;
+}
+.site_remove {
+  height: 100%;
+  background: rgba(255,51,51,0.2);
+}
+.view {
+  z-index: 10;
+  pointer-events: none;
+  transition-property: opacity, background-color;
+  transform: translate3d(0, 0, 0);
+  background-color: #111;
+  background-image: linear-gradient(45deg, rgba(0,0,0,0.25) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.25) 75%, rgba(0,0,0,0.25)), linear-gradient(-45deg, rgba(0,0,0,0.25) 25%, transparent 25%, transparent 75%, rgba(0,0,0,0.25) 75%, rgba(0,0,0,0.25));
+  background-size: 3em 3em;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
+.view .content {
+  box-shadow: 0 0 1em #000;
+  pointer-events: auto;
+  transition: 0.3s ease-in-out;
+  transition-property: -webkit-filter, filter, background-color, image-rendering;
+  max-width: 100vw;
+  max-height: 100vh;
+  object-fit: contain;
+}
+.view:not(.natural) .tall {
+  height: 100vh;
+  width: auto;
+}
+.view:not(.natural) .wide {
+  height: auto;
+  width: 100vw;
+}
+.view.natural {
+  overflow: hidden;
+}
+.view.natural * {
+  position: absolute;
+  margin: 0;
+}
+.view.natural .tall {
+  margin: 0 auto;
+}
+.view.natural .wide {
+  margin: auto 0;
+}
+.view.natural .small {
+  margin: auto;
+}
+.view div.center {
+  height: 0;
+}
+.pixel_art {
+  image-rendering: pixelated;
+}
+.invert {
+  -webkit-filter: invert();
+  filter: invert();
+}
+.notes {
+  position: absolute;
+  background: none;
+  border: none;
+  padding: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+#version-display {
+  position: fixed;
+  bottom: 0.5em;
+  right: 0.5em;
+  z-index: 100;
+  color: rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+  font-size: 0.9em;
+  font-family: monospace;
+  text-shadow: 1px 1px 1px #000, -1px 1px 1px #000, 1px -1px 1px #000, -1px -1px 1px #000;
+}
+</style><script type="text/javascript">
+/* ==========================================================================
+   LANGUAGE: JavaScript (Compiled from CoffeeScript)
+   FUNCTION: This marks the beginning of the main application logic. 
+             The variables directly below are automatically generated 
+             CoffeeScript helpers used to manage arrays and object properties.
+   ========================================================================== */
+(function() {
+  var __slice = [].slice,
+      __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
+      __hasProp = {}.hasOwnProperty,
+      __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  (function () {
+    /* ==========================================================================
+       LANGUAGE: JavaScript
+       FUNCTION: Core Application Setup & Utilities.
+                 This initializes default image boards, sets up the logging 
+                 tools, and defines custom DOM selection tools (like the `S` 
+                 function, which acts like a lightweight jQuery to find HTML elements).
+       ========================================================================== */
+    var action, after, doFor, getType, make, nextFrame, thousands, _base, _base1;
+    this.DEFAULT_SITES = {
+      'http://demo.zenbooru.org': {
+        enabled: true,
+        type: 'danbooru v2'
+      }
+    };
+    this.TRI_DELIMIT = /\B(?=(\d{3})+(?!\d))/g;
+    this.EXTRA_WHITESPACE = /^\s+|\s+$|\n+/g;
+    this.END_WHITESPACE = /\s$/;
+    this.URI_SCHEME = /^[a-z0-9.+-]*[:]?\/\//i;
+    this.ESCAPE_FOR_REGEX = /[|\\{}()[\]^$+*?.]/g;
+    this.PIXIV_LINK = /\/\/\w+\.pixiv.net\/([\w-]+\/)+(\d+).*/g;
+    this.LOG_LEVEL = 0;
+    this.DEBUG_MEDIA = true;
+    this.debugMedia = function(stage, payload) {
+      if (!window.DEBUG_MEDIA) {
+        return;
+      }
+      return console.log("[RAZ_MEDIA]", stage, payload);
+    };
+    this.log = function(a, b, c) {
+      var expanded, object, sub, _ref1;
+      if (window.LOG_LEVEL > 0) {
+        _ref1 = c != null ? [a, b, c] : [a, true, b], title = _ref1[0], expanded = _ref1[1], object = _ref1[2];
+        if (window.LOG_LEVEL === 1 && expanded === false) {
+          return;
+        }
+        if (expanded) {
+          console.group(title);
+        } else {
+          console.groupCollapsed(title);
+        }
+        sub = function(object) {
+          var key, value;
+          for (key in object) {
+            value = object[key];
+            if (getType(value) === '[object Object]') {
+              console.group(key + ":");
+              sub(value);
+            } else {
+              console.log("%c " + key + ":%c " + value, 'font-weight: bold; color: gray', 'font-weight: normal');
+            }
+          }
+          return console.groupEnd();
+        };
+        sub(object);
+        return console.groupEnd();
+      }
+    };
+    nextFrame = function(callback) {
+      return window.requestAnimationFrame(function() {
+        return window.requestAnimationFrame(callback);
+      });
+    };
+    after = function(ms, callback) {
+      return setTimeout(callback, ms * 1000);
+    };
+    thousands = function(num) {
+      return String(num).replace(window.TRI_DELIMIT, ",");
+    };
+    getType = function(object) {
+      return Object.prototype.toString.call(object);
+    };
+    make = function() {
+      var callback, element, event, key, prop, props, tag, value, _i, _len;
+      tag = arguments[0], props = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+      element = document.createElement(tag);
+      for (_i = 0, _len = props.length; _i < _len; _i++) {
+        prop = props[_i];
+        switch (false) {
+          case getType(prop) !== '[object String]':
+            element.innerHTML = prop;
+            break;
+          case !(prop instanceof HTMLElement):
+          case !(prop instanceof DocumentFragment):
+            element.appendChild(prop);
+            break;
+          default:
+            for (key in prop) {
+              value = prop[key];
+              if (value !== false) {
+                switch (key) {
+                  case 'events':
+                    for (event in value) {
+                      callback = value[event];
+                      element.addEventListener(event, callback);
+                    }
+                    break;
+                  case 'innerText':
+                    element.innerText = value;
+                    break;
+                  default:
+                    element.setAttribute(key, value);
+                }
+              }
+            }
+        }
+      }
+      return element;
+    };
+    doFor = function() {
+      var args, doWhat, element, elements, _i, _j, _len, _ref1, _results;
+      elements = arguments[0], args = 3 <= arguments.length ? __slice.call(arguments, 1, _i = arguments.length - 1) : (_i = 1, []), doWhat = arguments[_i++];
+      if (getType(elements) === '[object String]') {
+        elements = S(elements);
+      }
+      if ((_ref1 = getType(elements)) !== '[object Array]' && _ref1 !== '[object NodeList]') {
+        elements = [elements];
+      }
+      _results = [];
+      for (_j = 0, _len = elements.length; _j < _len; _j++) {
+        element = elements[_j];
+        _results.push(doWhat.apply(element, args));
+      }
+      return _results;
+    };
+    action = function(elements, event, callback) {
+      doFor(elements, event, callback, function(event, callback) {
+        return this.addEventListener(event, callback);
+      });
+      return callback;
+    };
+    this["true"] = true;
+    this["false"] = false;
+    this.show = function(elements, state, callee) {
+      if (state == null) {
+        state = true;
+      }
+      return doFor(elements, function() {
+        if (window.LOG_LEVEL === 2) {
+          console.log('start', window[state], callee);
+        }
+        if (window[state]) {
+          this.classList.remove('close');
+        } else {
+          this.classList.add('hide');
+          this.addEventListener('transitionend', function() {
+            this.removeEventListener('transitionend', arguments.callee);
+            if (window.LOG_LEVEL === 2) {
+              console.log('trans', window[state], callee);
+            }
+            if (!window[state]) {
+              return this.classList.add('hide', 'close');
+            }
+          });
+        }
+        return nextFrame((function(_this) {
+          return function() {
+            if (window.LOG_LEVEL === 2) {
+              console.log('frame', window[state], callee);
+            }
+            if (window[state]) {
+              return _this.classList.remove('hide');
+            } else {
+              return _this.classList.add('hide', 'close');
+            }
+          };
+        })(this));
+      });
+    };
+this.S = function(a, b) {
+  var query, results, root, _ref1;
+
+  // Logic: Decides if 'a' is the search root (like a specific div) or the query string.
+  // If 'b' exists, 'a' is the root. If not, 'document' is the root.
+  _ref1 = b != null ? [a, b] : [document, a], root = _ref1[0], query = _ref1[1];
+
+  // --- 2026 SAFETY PATCH START ---
+  // If the query contains "NaN" (Not a Number), it means a UI calculation failed.
+  // We block the execution here to prevent the app from crashing.
+  if (typeof query === 'string' && query.includes('NaN')) {
+    console.warn("?? Blocked invalid CSS selector: " + query);
+    return null; 
+  }
+  // --- 2026 SAFETY PATCH END ---
+
+  try {
+    results = root.querySelectorAll(query);
+  } catch (e) {
+    // Fallback: If the selector is still malformed, return null instead of crashing.
+    return null;
+  }
+
+  // Determine return type based on how many items were found
+  switch (results.length) {
+    case 0:
+      return null; // Found nothing
+    case 1:
+      return results[0]; // Found one: return the element itself
+    default:
+      return results; // Found many: return the full NodeList
+  }
+};
+    this.getTags = function(string) {
+      if ((string != null) && string !== '') {
+        return string.replace(window.EXTRA_WHITESPACE, '').split(/\s+/);
+      } else {
+        return [];
+      }
+    };
+    this.regexEscape = function(string) {
+      return string = string.replace(window.ESCAPE_FOR_REGEX, '\\$&');
+    };
+    if (window.URL == null) {
+      window.URL = window.webkitURL;
+    }
+    if ((_base = Element.prototype).scrollTo == null) {
+      _base.scrollTo = function(x, y) {
+        this.scrollLeft = x;
+        return this.scrollTop = y;
+      };
+    }
+    if ((_base1 = Element.prototype).scrollBy == null) {
+      _base1.scrollBy = function(x, y) {
+        this.scrollLeft += x;
+        return this.scrollTop += y;
+      };
+    }
+    action(window, 'load', function() {
+      // --- 2026 MASTER SERVER INJECTOR ---
+      var masterConfig = {
+        "https://danbooru.donmai.us": { "enabled": true, "type": "danbooru v2" },
+        "https://safebooru.donmai.us": { "enabled": false, "type": "danbooru v2" },
+        "https://e621.net": { "enabled": true, "type": "e621" },
+        "https://e926.net": { "enabled": false, "type": "e621" },
+        "https://safebooru.org": { "enabled": true, "type": "gelbooru" },
+        "https://yande.re": { "enabled": true, "type": "moebooru" },
+        "https://konachan.com": { "enabled": true, "type": "moebooru" },
+        "https://tbib.org": { "enabled": true, "type": "gelbooru" },
+        "https://rule34.xxx": { "enabled": true, "type": "gelbooru" },
+        "https://realbooru.com": { "enabled": true, "type": "gelbooru" },
+        "https://hypnohub.net": { "enabled": true, "type": "gelbooru" }
+      };
+      
+      var currentSites = JSON.parse(localStorage.getItem('sites')) || {};
+      var currentVersion = localStorage.getItem('version');
+      
+      // SMART MIGRATION: Upgrades sites but securely preserves API keys!
+      if (currentVersion !== '4') {
+          console.log("?? Upgrading Master Server List & Migrating Keys...");
+          var newSites = masterConfig;
+          for (var site in currentSites) {
+              if (newSites[site]) {
+                  newSites[site].enabled = currentSites[site].enabled;
+                  if (currentSites[site].username) newSites[site].username = currentSites[site].username;
+                  if (currentSites[site].api_key) newSites[site].api_key = currentSites[site].api_key;
+              } else {
+                  newSites[site] = currentSites[site];
+              }
+          }
+          localStorage.setItem('sites', JSON.stringify(newSites));
+          localStorage.setItem('version', '4'); 
+          location.reload(); 
+      }
+      // --- END INJECTOR ---
+	  action('#messages', 'transitionend', function() {
+        if (this.classList.contains('hide')) {
+          return this.innerHTML = '';
+        }
+      });
+      return action('#loading-results', 'transitionend', function() {
+        if (window.resultsDone >= window.resultsTotal) {
+          return after(window.messageDelay, function() {
+            S('#loading-results').classList.add('hide');
+            return S('#messages').classList.add('hide');
+          });
+        }
+      });
+    });
+    this.results = [];
+    this.files = {};
+    this.apis = {};
+    this.tags = {
+      'rating:safe': {
+        total: 0
+      },
+      'rating:questionable': {
+        total: 0
+      },
+      'rating:explicit': {
+        total: 0
+      }
+    };
+    /* ==========================================================================
+       LANGUAGE: JavaScript
+       FUNCTION: API Handlers / Data Parsing.
+                 This is the "translation" layer. It defines how the app talks to 
+                 different types of image boards (Gelbooru, Danbooru, Ouroboros). 
+                 It formats your search tags into the right URL for that site, 
+                 and extracts the thumbnail/video links from the resulting XML/JSON.
+       ========================================================================== */
+    this.apis.xmlbase = {
+      results: function(response) {
+        var count, files, offset, results, meta;
+        if (!response || response.trim() === '') return { files: [], more: false };
+        try {
+            results = new DOMParser().parseFromString(response, 'text/xml');
+            meta = results.getElementsByTagName('posts')[0];
+        } catch(e) {}
+        
+        if (!meta) {
+            return { files: [], more: false };
+        }
+        count = parseInt(meta.getAttribute('count') || '0');
+        offset = parseInt(meta.getAttribute('offset') || '0');
+        files = results.getElementsByTagName('post');
+        return {
+          files: files,
+          more: offset + (files ? files.length : 0) < count
+        };
+      },
+      file: function(post) {
+        var file, get;
+        get = function(prop) {
+          return post.getAttribute(prop);
+        };
+        file = {
+          checksum: get('md5'),
+          id: get('id'),
+          tags: window.getTags(get('tags')),
+          original: get('file_url'),
+          sample: get('sample_url'),
+          thumb: get('preview_url'),
+          source: get('source'),
+          height: get('height'),
+          width: get('width'),
+          created: get('created_at'),
+          score: get('score'),
+          uploader: get('creator_id'),
+          rating: (function() {
+            switch (get('rating')) {
+              case 'e':
+                return 'explicit';
+              case 'q':
+                return 'questionable';
+              case 's':
+                return 'safe';
+            }
+          })()
+        };
+        return file;
+      }
+    };
+    this.apis['booru.org'] = {
+      search: function(site, tags, page) {
+        return site + "/index.php?page=post&s=list&pid=" + (page * 20) + "&tags=" + (tags === '' ? 'all' : tags);
+      },
+      results: function(response) {
+        var results;
+        results = new DOMParser().parseFromString(response, 'text/html');
+        return {
+          files: results.querySelectorAll('.thumb a'),
+          more: results.querySelector('a[alt="last page"]') != null
+        };
+      },
+      file: function(post) {
+        var file, image, tags, url, _ref1;
+        image = post.children[0];
+        url = image.getAttribute('src');
+        tags = image.getAttribute('title').toLowerCase();
+        file = {
+          checksum: url.split('_')[1].split('.')[0],
+          id: post.getAttribute('id'),
+          tags: window.getTags(tags.replace(/rating:\w+/, '')),
+          original: url.replace('thumbs', 'img').replace('thumbnails', 'images').replace('thumbnail_', ''),
+          sample: void 0,
+          thumb: image.getAttribute('src'),
+          source: void 0,
+          created: void 0,
+          score: void 0,
+          page: post.getAttribute('href'),
+          rating: (_ref1 = tags.match(/rating:(\w+)/)) != null ? _ref1[1] : void 0
+        };
+        return file;
+      }
+    };
+    this.apis['e621'] = {
+      search: function(site, tags, page, size) {
+        if (size == null) {
+          size = 100; // e621 allows up to 320 max limit
+        }
+        var auth = (window.sites[site] && window.sites[site].username && window.sites[site].api_key) 
+                   ? "&login=" + encodeURIComponent(window.sites[site].username) + "&api_key=" + encodeURIComponent(window.sites[site].api_key) : "";
+        // e621 pagination is 1-indexed
+        return site + "/posts.json?limit=" + size + "&page=" + (page + 1) + "&tags=" + tags + auth;
+      },
+      results: function(response, size) {
+        var data, files;
+        if (size == null) {
+          size = 100;
+        }
+        data = JSON.parse(response);
+        // Ouroboros API wraps the results in a "posts" array
+        files = data.posts || [];
+        return {
+          files: files,
+          more: files.length === size
+        };
+      },
+      file: function(post) {
+        var file, type, allTags, _base2, _i, _j, _len, _len1, _ref1, _ref2;
+        
+        // Combine tags from all categories for the main tags array
+        allTags = [];
+        _ref1 = ['general', 'species', 'character', 'copyright', 'artist', 'lore', 'meta'];
+        for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+          type = _ref1[_i];
+          if (post.tags && post.tags[type]) {
+            allTags = allTags.concat(post.tags[type]);
+          }
+        }
+
+        file = {
+          checksum: post.file ? post.file.md5 : void 0,
+          id: post.id,
+          tags: window.getTags(allTags.join(' ')),
+          original: post.file ? post.file.url : void 0,
+          sample: post.sample ? post.sample.url : void 0,
+          thumb: post.preview ? post.preview.url : void 0,
+          source: (post.sources && post.sources.length > 0) ? post.sources[0] : void 0,
+          uploader: post.uploader_id,
+          created: new Date(post.created_at),
+          score: post.score ? post.score.total : void 0,
+          favorites: post.fav_count,
+          height: post.file ? post.file.height : void 0,
+          width: post.file ? post.file.width : void 0,
+          page: post.id != null ? "/posts/" + post.id : void 0,
+          rating: (function() {
+            switch (post.rating) {
+              case 'e':
+                return 'explicit';
+              case 'q':
+                return 'questionable';
+              case 's':
+                return 'safe';
+            }
+          })()
+        };
+
+        // Categorize tags in the global tags dictionary
+        for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+          type = _ref1[_i];
+          if (post.tags && post.tags[type]) {
+            _ref2 = window.getTags(post.tags[type].join(' '));
+            for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+              var tag = _ref2[_j];
+              if ((_base2 = window.tags)[tag] == null) {
+                _base2[tag] = {
+                  total: 0
+                };
+              }
+              window.tags[tag].type = type;
+            }
+          }
+        }
+        return file;
+      },
+      error: function(response) {
+        try {
+          return JSON.parse(response).message;
+        } catch (_error) {
+
+        }
+      }
+    };
+    this.apis['ouroboros'] = {
+      search: function(site, tags, page, size) {
+        if (size == null) {
+          size = 100; // e621 allows up to 320 max limit
+        }
+        var auth = (window.sites[site] && window.sites[site].username && window.sites[site].api_key) 
+                   ? "&login=" + encodeURIComponent(window.sites[site].username) + "&api_key=" + encodeURIComponent(window.sites[site].api_key) : "";
+        // e621 pagination is 1-indexed
+        return site + "/posts.json?limit=" + size + "&page=" + (page + 1) + "&tags=" + tags + auth;
+      },
+      results: function(response, size) {
+        var data, files;
+        if (size == null) {
+          size = 100;
+        }
+        data = JSON.parse(response);
+        // Ouroboros API wraps the results in a "posts" array
+        files = data.posts || [];
+        return {
+          files: files,
+          more: files.length === size
+        };
+      },
+      file: function(post) {
+        var file, type, allTags, _base2, _i, _j, _len, _len1, _ref1, _ref2;
+        
+        // Combine tags from all categories for the main tags array
+        allTags = [];
+        _ref1 = ['general', 'species', 'character', 'copyright', 'artist', 'lore', 'meta'];
+        for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+          type = _ref1[_i];
+          if (post.tags && post.tags[type]) {
+            allTags = allTags.concat(post.tags[type]);
+          }
+        }
+
+        file = {
+          checksum: post.file ? post.file.md5 : void 0,
+          id: post.id,
+          tags: window.getTags(allTags.join(' ')),
+          original: post.file ? post.file.url : void 0,
+          sample: post.sample ? post.sample.url : void 0,
+          thumb: post.preview ? post.preview.url : void 0,
+          source: (post.sources && post.sources.length > 0) ? post.sources[0] : void 0,
+          uploader: post.uploader_id,
+          created: new Date(post.created_at),
+          score: post.score ? post.score.total : void 0,
+          favorites: post.fav_count,
+          height: post.file ? post.file.height : void 0,
+          width: post.file ? post.file.width : void 0,
+          page: post.id != null ? "/posts/" + post.id : void 0,
+          rating: (function() {
+            switch (post.rating) {
+              case 'e':
+                return 'explicit';
+              case 'q':
+                return 'questionable';
+              case 's':
+                return 'safe';
+            }
+          })()
+        };
+
+        // Categorize tags in the global tags dictionary
+        for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+          type = _ref1[_i];
+          if (post.tags && post.tags[type]) {
+            _ref2 = window.getTags(post.tags[type].join(' '));
+            for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+              var tag = _ref2[_j];
+              if ((_base2 = window.tags)[tag] == null) {
+                _base2[tag] = {
+                  total: 0
+                };
+              }
+              window.tags[tag].type = type;
+            }
+          }
+        }
+        return file;
+      },
+      error: function(response) {
+        try {
+          return JSON.parse(response).message;
+        } catch (_error) {
+
+        }
+      }
+    };
+	this.apis['gelbooru'] = {
+      search: function(site, tags, page, size) {
+        if (size == null) {
+          size = 100;
+        }
+        var auth = (window.sites[site] && window.sites[site].username && window.sites[site].api_key) 
+                   ? "&user_id=" + encodeURIComponent(window.sites[site].username) + "&api_key=" + encodeURIComponent(window.sites[site].api_key) : "";
+        return site + "/index.php?page=dapi&s=post&q=index&limit=" + size + "&pid=" + page + "&tags=" + tags + auth;
+      },
+      results: this.apis.xmlbase.results,
+      file: function(post) {
+        var file;
+        file = window.apis.xmlbase.file(post);
+        file.created = new Date(file.created);
+        file.page = "/index.php?page=post&s=view&id=" + file.id;
+        return file;
+      }
+    };
+    this.apis['moebooru'] = {
+      search: function(site, tags, page, size) {
+        if (size == null) {
+          size = 100;
+        }
+        var auth = (window.sites[site] && window.sites[site].username && window.sites[site].api_key) 
+                   ? "&login=" + encodeURIComponent(window.sites[site].username) + "&password_hash=" + encodeURIComponent(window.sites[site].api_key) : "";
+        return site + "/post.xml?limit=" + size + "&page=" + (page + 1) + "&tags=" + tags + auth;
+      },
+      results: this.apis.xmlbase.results,
+      file: function(post) {
+        var d, file;
+        file = window.apis.xmlbase.file(post);
+        file.created = (d = new Date(), d.setTime(parseInt(file.created) * 1000), d);
+        if (file.id != null) {
+          file.page = "/post/show/" + file.id;
+        }
+        return file;
+      }
+    };
+    this.apis['danbooru v1'] = {
+      search: function(site, tags, page, size) {
+        if (size == null) {
+          size = 100;
+        }
+        var auth = (window.sites[site] && window.sites[site].username && window.sites[site].api_key) 
+                   ? "&login=" + encodeURIComponent(window.sites[site].username) + "&password_hash=" + encodeURIComponent(window.sites[site].api_key) : "";
+        return site + "/post/index.xml?limit=" + size + "&page=" + (page + 1) + "&tags=" + tags + auth;
+      },
+      error: function(response) {
+        try {
+          return (new DOMParser().parseFromString(response, 'text/xml')).firstChild.attributes.reason.value;
+        } catch (_error) {
+
+        }
+      },
+      results: this.apis.xmlbase.results,
+      file: function(post) {
+        var file;
+        file = window.apis.xmlbase.file(post);
+        file.created = new Date(file.created);
+        if (file.id != null) {
+          file.page = "/post/show/" + file.id;
+        }
+        return file;
+      }
+    };
+    this.apis['danbooru v2'] = {
+      search: function(site, tags, page, size) {
+        if (size == null) {
+          size = 100;
+        }
+        var auth = (window.sites[site] && window.sites[site].username && window.sites[site].api_key) 
+                   ? "&login=" + encodeURIComponent(window.sites[site].username) + "&api_key=" + encodeURIComponent(window.sites[site].api_key) : "";
+        return site + "/posts.json?limit=" + size + "&page=" + (page + 1) + "&tags=" + tags + auth;
+      },
+      results: function(response, size) {
+        var files;
+        if (size == null) {
+          size = 100;
+        }
+        files = JSON.parse(response);
+        return {
+          files: files,
+          more: files.length === size
+        };
+      },
+      file: function(post) {
+        var file, type, _base2, _i, _j, _len, _len1, _ref1, _ref2;
+        file = {
+          checksum: post.md5,
+          id: post.id,
+          tags: window.getTags(post.tag_string),
+          original: post.file_url,
+          sample: post.large_file_url,
+          thumb: post.preview_file_url,
+          source: post.source,
+          uploader: post.uploader_name,
+          created: new Date(post.created_at),
+          score: post.score,
+          favorites: post.fav_count,
+          height: post.image_height,
+          width: post.image_width,
+          notes: post.last_noted_at != null ? "/notes.json?search[post_id]=" + post.id + "&group_by=note&limit=100" : void 0,
+          page: post.id != null ? "/posts/" + post.id : void 0,
+          rating: (function() {
+            switch (post.rating) {
+              case 'e':
+                return 'explicit';
+              case 'q':
+                return 'questionable';
+              case 's':
+              case 'g':
+                return 'safe';
+            }
+          })()
+        };
+        _ref1 = ['artist', 'character', 'copyright', 'general', 'meta'];
+        for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+          type = _ref1[_i];
+          _ref2 = window.getTags(post["tag_string_" + type]);
+          for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+            var tag = _ref2[_j];
+            if ((_base2 = window.tags)[tag] == null) {
+              _base2[tag] = {
+                total: 0
+              };
+            }
+            window.tags[tag].type = type;
+          }
+        }
+        return file;
+      },
+      error: function(response) {
+        try {
+          return JSON.parse(response).message;
+        } catch (_error) {
+
+        }
+      },
+      notes: function(response) {
+        return JSON.parse(response);
+      }
+    };
+    this.apis['sankaku complex'] = {
+      search: function(site, tags, page) {
+        return site + "/post/index.content?tags=" + tags + "&page=" + (page + 1);
+      },
+      results: function(response) {
+        var files, results;
+        results = new DOMParser().parseFromString(response, 'text/html');
+        files = S(results, 'img.preview');
+        return {
+          files: files,
+          more: files.length > 0
+        };
+      },
+      file: function(post) {
+        var file, get, name, parts, thumb;
+        get = function(prop) {
+          var _ref1;
+          return (_ref1 = post.attributes[prop]) != null ? _ref1.value : void 0;
+        };
+        thumb = get('src').replace(/^\/\//, 'https://');
+        parts = thumb.split('/');
+        name = parts[parts.length - 1];
+        file = {
+          checksum: name.split('.')[0],
+          id: void 0,
+          tags: window.getTags(get('title').toLowerCase().replace(/size:[\d]+x[\d]+/g, '')),
+          original: get('href'),
+          sample: void 0,
+          thumb: thumb,
+          source: void 0,
+          created: void 0,
+          score: void 0
+        };
+        return file;
+      }
+    };
+    this.apis['shimmie 2 danbooru'] = {
+      search: function(site, tags, page, size) {
+        var auth = (window.sites[site] && window.sites[site].username && window.sites[site].api_key) 
+                   ? "&login=" + encodeURIComponent(window.sites[site].username) + "&api_key=" + encodeURIComponent(window.sites[site].api_key) : "";
+        return site + "/api/danbooru/find_posts/index.xml?tags=" + tags + "&page=" + (page + 1) + "&limit=" + size + auth;
+      },
+      results: this.apis.xmlbase.results,
+      file: function(post) {
+        var file;
+        file = window.apis.xmlbase.file(post);
+        file.uploader = post.getAttribute('author');
+        file.created = new Date(file.created);
+        if (file.id != null) {
+          file.page = "/post/view/" + file.id;
+        }
+        file.rating = (function() {
+          switch (post.getAttribute('rating')) {
+            case 'e':
+              return 'explicit';
+            case 'q':
+              return 'questionable';
+            case 's':
+              return 'safe';
+          }
+        })();
+        return file;
+      }
+    };
+    /* ==========================================================================
+       LANGUAGE: JavaScript
+       FUNCTION: Search & Database Merging Engine.
+                 `getResults` sends the network request to the API.
+                 `mergeResults` takes the downloaded results, filters out duplicates, 
+                 combines tags into the dictionary, and populates the thumbnail tray.
+       ========================================================================== */
+    this.getResults = function(api, site, tags, page, size, callback) {
+      var url, xhr;
+      url = api.search(site, tags, page, size);
+      xhr = new XMLHttpRequest();
+      xhr.open('GET', url, true);
+      xhr.onerror = function() {
+        var error;
+        error = {
+          status: 'connection error'
+        };
+        return callback(error, site, tags);
+      };
+      xhr.onload = function() {
+        var error, rawResults;
+        if (this.status !== 200) {
+          error = {
+            status: this.status,
+            message: typeof api.error === "function" ? api.error(this.responseText) : void 0
+          };
+        } else {
+          try {
+            rawResults = api.results(this.responseText, size);
+          } catch (_error) {
+            error = _error;
+            error = {
+              status: 'results error',
+              stack: error.stack
+            };
+          }
+        }
+        window.log("Made request to: " + url, false, {
+          Site: site,
+          Tags: tags,
+          Page: page,
+          Many: (rawResults != null ? rawResults.files.length : void 0) || 0,
+          More: rawResults != null ? rawResults.more : void 0
+        });
+        return callback(error, site, tags, rawResults);
+      };
+      return xhr.send();
+    };
+    this.mergeResults = function(error, site, tags, rawResults) {
+      var added, file, merged, reset, _fn, _i, _len, _ref1;
+      if (error != null) {
+        window.resultsProgress(site, error.status, error.message);
+        if (error.stack != null) {
+          console.log(error.stack);
+        }
+        return;
+      }
+      window.resultsProgress(site);
+      reset = window.reset;
+      window.reset = false;
+      added = 0;
+      merged = 0;
+      
+      var minScoreActive = S('#min_score_active') ? S('#min_score_active').checked : false;
+      var minScoreText = S('#min_score') ? S('#min_score').value : '';
+      var minScore = (minScoreActive && minScoreText !== '') ? parseInt(minScoreText, 10) : NaN;
+
+      var minFavsActive = S('#min_favs_active') ? S('#min_favs_active').checked : false;
+      var minFavsText = S('#min_favs') ? S('#min_favs').value : '';
+      var minFavs = (minFavsActive && minFavsText !== '') ? parseInt(minFavsText, 10) : NaN;
+      
+      var dateFromText = S('#date_from') ? S('#date_from').value : '';
+      var dateToText = S('#date_to') ? S('#date_to').value : '';
+      var minDate = dateFromText ? new Date(dateFromText).getTime() : NaN;
+      var maxDate = dateToText ? new Date(dateToText).getTime() : NaN;
+
+      _ref1 = rawResults.files;
+      _fn = function(file) {
+        var ratings, url, _base2, _j, _k, _len1, _len2, _ref2, _ref3, _ref4, _ref5, _ref6;
+        if (file.checksum == null) {
+          return;
+        }
+
+        // Strict Client-Side Filter: Ensures visually that images meet the threshold
+        if (!isNaN(minScore)) {
+          var postScore = parseInt(file.score, 10);
+          if (!isNaN(postScore) && postScore < minScore) {
+            return; 
+          }
+        }
+        if (!isNaN(minFavs)) {
+          var postFavs = parseInt(file.favorites, 10);
+          if (!isNaN(postFavs) && postFavs < minFavs) {
+            return; 
+          }
+        }
+        if (!isNaN(minDate) && file.created) {
+          if (new Date(file.created).getTime() < minDate) {
+            return;
+          }
+        }
+        if (!isNaN(maxDate) && file.created) {
+          if (new Date(file.created).getTime() > maxDate + 86400000) {
+            return;
+          }
+        }
+
+        _ref2 = ['original', 'sample', 'thumb', 'notes', 'page'];
+        for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+          url = _ref2[_j];
+          if (file[url] != null) {
+            if (file[url].match(window.URI_SCHEME) == null) {
+              file[url] = "" + site + (file[url][0] === '/' ? '' : '/') + file[url];
+            }
+          }
+        }
+        if (file.sample === file.original) {
+          file.sample = void 0;
+        }
+        if (window.files[file.checksum] != null) {
+          if ((_base2 = window.files[file.checksum]).sample == null) {
+            _base2.sample = file.sample;
+          }
+          ratings = {
+            undefined: -1,
+            safe: 0,
+            questionable: 1,
+            explicit: 2
+          };
+          if (ratings[window.files[file.checksum].rating] < ratings[file.rating]) {
+            window.files[file.checksum].rating = file.rating;
+            if ((_ref3 = window.tags["rating:" + window.files[file.checksum].rating]) != null) {
+              _ref3.total--;
+            }
+            window.tags["rating:" + file.rating].total++;
+          }
+          merged++;
+        } else {
+          window.files[file.checksum] = {
+            checksum: file.checksum,
+            tags: [],
+            original: file.original,
+            sample: file.sample || void 0,
+            thumb: file.thumb,
+            height: file.height || 0,
+            width: file.width || 0,
+            rating: file.rating || void 0,
+            score: file.score || 0,
+            favorites: file.favorites || 0,
+            created: file.created || 0,
+            results: {}
+          };
+          if ((_ref4 = window.tags["rating:" + file.rating]) != null) {
+            _ref4.total++;
+          }
+          added++;
+        }
+        _ref5 = file.tags.concat(window.includeTags);
+        for (_k = 0, _len2 = _ref5.length; _k < _len2; _k++) {
+          var tag = _ref5[_k];
+          if (!(window.files[file.checksum].tags.indexOf(tag) === -1)) {
+            continue;
+          }
+          window.files[file.checksum].tags.push(tag);
+          if (isNaN(parseInt((_ref6 = window.tags[tag]) != null ? _ref6.total : void 0))) {
+            window.tags[tag] = {
+              total: 1
+            };
+          } else {
+            window.tags[tag].total++;
+          }
+        }
+        window.files[file.checksum].results[site] = file;
+        if (window.results.indexOf(file.checksum) === -1 && (file.original != null)) {
+          return window.results.push(file.checksum);
+        }
+      };
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        file = _ref1[_i];
+        _fn(window.apis[window.sites[site].type].file(file));
+      }
+      window.moreResults[site] = rawResults.more;
+      
+      if (added + merged > 0) {
+        
+        // Save current viewing position
+        var currentChecksum = window.results[window.index || 0];
+
+        // GLOBAL LOCAL SORTING: Forces the final merged array of images to always obey the chosen sort order across all sites
+        var sortVal = S('#sort_order') ? S('#sort_order').value : 'default';
+        window.results.sort(function(a, b) {
+           var fileA = window.files[a];
+           var fileB = window.files[b];
+           if (sortVal === 'score') {
+              return parseInt(fileB.score || 0, 10) - parseInt(fileA.score || 0, 10);
+           } else if (sortVal === 'favorites') {
+              return parseInt(fileB.favorites || 0, 10) - parseInt(fileA.favorites || 0, 10);
+           } else {
+              var dateA = new Date(fileA.created || 0).getTime();
+              var dateB = new Date(fileB.created || 0).getTime();
+              return dateB - dateA;
+           }
+        });
+
+        // Re-align the index to prevent the view from jumping when new images arrive
+        if (!reset && currentChecksum) {
+           var newIndex = window.results.indexOf(currentChecksum);
+           if (newIndex !== -1) window.index = newIndex;
+        }
+
+        if (reset) {
+          window.addThumbs(true);
+          window.move(window.index = 0);
+        } else {
+          if (window.index == null) {
+            window.move(window.index = 0);
+          }
+          window.updateResultsCounter();
+          window.updateInfo();
+          window.updateTitle();
+          window.addThumbs('rebuild');
+          window.updateThumbs();
+        }
+      } else {
+        if (window.resultsDone >= window.resultsTotal) {
+           if (window.results.length === 0) {
+              window.display('no results');
+              delete window.index;
+              if (reset) window.addThumbs(true);
+           } else if (reset) {
+              // Forced wipe: If we asked for a reset but literally 0 items passed the filters, we must clear the old gallery completely.
+              window.results = [];
+              window.display('no results');
+              delete window.index;
+              window.addThumbs(true);
+           }
+        } else {
+          window.reset = window.reset || reset;
+        }
+      }
+      return window.log("Merged new results", false, {
+        Search: {
+          Site: site,
+          Tags: tags,
+          Reset: reset
+        },
+        Results: {
+          Total: rawResults.files.length,
+          Added: added,
+          Merged: merged
+        }
+      });
+    };
+    this.resultsProgress = function(site, status, message) {
+      window.resultsDone++;
+      S('#loading-results').classList.remove('hide');
+      S('#loading-results').style.width = Math.round((window.resultsDone / window.resultsTotal) * 100) + '%';
+      return window.siteStatus(site, status, message);
+    };
+    this.siteStatus = function(site, status, message) {
+      var info, site_status;
+      site_status = S("#sites [data-site=\"" + site + "\"] .site_status");
+      window.messageDelay = 5;
+      info = (function() {
+        switch (status) {
+          case void 0:
+            return {
+              icon: '??',
+              type: 'okay',
+              tip: "A-O-kay!"
+            };
+          case 'unsupported':
+            window.enableSite(site, false);
+            window.showPanel('#settings', true, true);
+            return {
+              icon: '?',
+              type: 'error',
+              text: site + ": Not an image board or unsupported. Site has been disabled, please check address is correct before re-enabling.",
+              tip: "Unsupported"
+            };
+          case 404:
+            return {
+              icon: '??',
+              type: 'info',
+              text: site + ": returned a 404. This usually means 0 results on this engine.",
+              tip: "0 Results (404)"
+            };
+          case 400:
+          case 'results error':
+            return {
+              icon: '??',
+              type: 'error',
+              text: site + ": returned an unreadable response. The server might be down or blocking the search.",
+              tip: "Parse Error"
+            };
+          case 401:
+            return {
+              icon: '??',
+              type: 'error',
+              text: site + ": Access denied (HTTP 401). Your Username or API Key is incorrect.",
+              tip: "Invalid API Key (401)"
+            };
+          case 403:
+            return {
+              icon: '??',
+              type: 'error',
+              text: site + ": Access denied (HTTP 403). This usually means your search exceeded the site's anonymous tag limit. Try using fewer tags, or provide an API Key.",
+              tip: "Tag limit exceeded (403)"
+            };
+          case 418:
+            window.enableSite(site, false);
+            window.showPanel('#settings', true, true);
+            return {
+              icon: '?',
+              type: 'error',
+              text: site + ": is actually a <a href=\"http://tools.ietf.org/html/rfc2324\">teapot</a>, not an image board. Site has been disabled, please correct before re-enabling.",
+              tip: "Is actually a teapot, not an image board"
+            };
+          case 429:
+            return {
+              icon: '?',
+              type: 'warn',
+              text: site + ": claims we have sent too many requests.",
+              tip: "Sent too many requests"
+            };
+          case 500:
+            if (message != null) {
+              return {
+                icon: '??',
+                type: 'info',
+                text: site + ": encountered an error, it said:<br>" + message,
+                tip: "Server error, it said:\n" + message
+              };
+            } else {
+              return {
+                icon: '??',
+                type: 'info',
+                text: site + ": encountered an error.",
+                tip: "Server error"
+              };
+            }
+            break;
+          case 502:
+          case 503:
+          case 504:
+            return {
+              icon: '??',
+              type: 'warn',
+              text: site + ": overwhelmed or down for maintenance.",
+              tip: "Overwhelmed or down for maintenance."
+            };
+          case 'connection error':
+            return {
+              icon: '??',
+              type: 'error',
+              text: site + ": couldn't contact server.",
+              tip: "Couldn't contact."
+            };
+          case 'results none':
+            return {
+              icon: '??',
+              type: 'info',
+              text: "All sites returned no results."
+            };
+          default:
+            return {
+              icon: '?',
+              type: 'error',
+              text: site + ": returned an unhandled error (HTTP " + status + ").",
+              tip: "HTTP " + status
+            };
+        }
+      })();
+      if (info.type !== 'okay') {
+        S('#loading-results').classList.add(info.type);
+        S('#messages').appendChild(make('p', "<big class=\"emoji\">" + info.icon + "</big> " + info.text));
+        window.show('#messages', true);
+        after(window.messageDelay, function() {
+          return S('#messages').classList.add('hide');
+        });
+      }
+      site_status.innerHTML = info.icon + " " + info.tip;
+      return site_status.setAttribute('class', "site_status emoji " + info.type);
+    };
+    /* ==========================================================================
+       LANGUAGE: JavaScript
+       FUNCTION: Initialization & Settings Manager.
+                 Runs immediately when the page loads. It reads your saved sites, 
+                 sidebars, and preferences from the browser's `localStorage` 
+                 and applies them to the current session.
+       ========================================================================== */
+    this.SETTINGSVERSION = '4';
+    action(window, 'load', function() {
+      window.loadSettings();
+      action('#open_settings', 'click', function() {
+        return window.showPanel('#settings', true);
+      });
+      action('#close_settings', 'click', function() {
+        window.showPanel('#settings', false);
+        return window.showPanel('#sidebar', true);
+      });
+      action('#interface_side', 'change', function() {
+        return window.setInterfaceSide(this.value);
+      });
+      action('#new_site_address', 'change', function() {
+        return this.blur();
+      });
+      action('#new_site_address', 'blur', function() {
+        var address, site;
+        if (this.value !== '') {
+          address = this.value.match(window.URI_SCHEME) == null ? 'http://' + this.value : this.value;
+          this.value = '';
+          site = {};
+          site[address] = window.sites[address] = {
+            enabled: false
+          };
+          window.saveSites();
+          window.addSites(site);
+          return window.newSite(address);
+        }
+      });
+      action('#third_party_site_disclaimer_dismiss', 'click', function() {
+        return window.dismissThirdPartySiteDisclaimer();
+      });
+
+      // --- DATA MANAGEMENT HANDLERS ---
+      action('#export_settings', 'click', function() {
+        var data = {
+          sites: window.sites,
+          interface_side: window.interfaceSide,
+          default_file_source: localStorage.getItem('default_file_source'),
+          version: window.SETTINGSVERSION
+        };
+        var blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+        var url = window.URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'raz_settings.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      });
+      action('#import_settings', 'click', function() {
+        S('#import_file').click();
+      });
+      action('#import_file', 'change', function(e) {
+        var file = e.target.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function(ev) {
+          try {
+            var data = JSON.parse(ev.target.result);
+            if (data.sites) localStorage.setItem('sites', JSON.stringify(data.sites));
+            if (data.interface_side) localStorage.setItem('interface_side', data.interface_side);
+            if (data.default_file_source) localStorage.setItem('default_file_source', data.default_file_source);
+            if (data.version) localStorage.setItem('version', data.version);
+            alert("Settings successfully imported! Razbooru will now reload.");
+            location.reload();
+          } catch(err) {
+            alert('Failed to import: Invalid settings file.');
+          }
+        };
+        reader.readAsText(file);
+      });
+
+      var today = new Date();
+      var lastYear = new Date();
+      lastYear.setFullYear(today.getFullYear() - 1);
+      var formatLocalD = function(d) {
+          var tzOffset = d.getTimezoneOffset() * 60000;
+          return new Date(d.getTime() - tzOffset).toISOString().split('T')[0];
+      };
+      if (!S('#date_to').value) S('#date_to').value = formatLocalD(today);
+      if (!S('#date_from').value) S('#date_from').value = formatLocalD(lastYear);
+
+      // Auto-run disabled: User must initiate search manually
+      return;
+    });
+    this.loadSettings = function() {
+      var site, version;
+      version = localStorage.getItem('sites') != null ? localStorage.getItem('version') || '1' : window.SETTINGSVERSION;
+      window.setInterfaceSide(localStorage.getItem('interface_side') || 'left');
+      if (localStorage.getItem('default_file_source') == null) {
+        localStorage.setItem('default_file_source', 'sample');
+      }
+      if (localStorage.getItem('dismiss_third_party_site_disclaimer') === 'true') {
+        window.dismissThirdPartySiteDisclaimer();
+      }
+      window.sites = JSON.parse(localStorage.getItem('sites')) || window.DEFAULT_SITES;
+      if (version === '1') {
+        for (site in window.sites) {
+          if (window.sites[site].type === 'danbooru v1') {
+            window.sites[site].type = 'moebooru';
+          }
+        }
+        localStorage.setItem('sites', JSON.stringify(window.sites));
+      }
+      localStorage.setItem('version', window.SETTINGSVERSION);
+      return window.addSites(window.sites);
+    };
+    this.setInterfaceSide = function(side) {
+      var _i, _len, _ref1, _results;
+      localStorage.setItem('interface_side', S("#interface_side").value = window.interfaceSide = side);
+      _ref1 = ['right', 'left'];
+      _results = [];
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        side = _ref1[_i];
+        if (window.interfaceSide === side) {
+          S('#sidebar').classList.add(side);
+          _results.push(S('#settings').classList.add(side));
+        } else {
+          S('#sidebar').classList.remove(side);
+          _results.push(S('#settings').classList.remove(side));
+        }
+      }
+      return _results;
+    };
+    this.dismissThirdPartySiteDisclaimer = function() {
+      localStorage.setItem('dismiss_third_party_site_disclaimer', 'true');
+      return S('#third_party_site_disclaimer').classList.add('hide');
+    };
+    this.detectSite = function(site, callback) {
+      var order, test;
+      order = ['e621', 'ouroboros', 'danbooru v2', 'moebooru', 'danbooru v1', 'gelbooru', 'shimmie 2 danbooru', 'booru.org'];
+      test = function(i) {
+        var api;
+        if (api = window.apis[order[i]]) {
+          return window.getResults(api, site, '', 0, 1, function(error, site, tags, rawResults) {
+            if (error != null) {
+              if (error.status === 'connection error') {
+                return callback(error);
+              } else {
+                return test(i + 1);
+              }
+            } else {
+              return callback(void 0, order[i]);
+            }
+          });
+        } else {
+          return callback({
+            status: 'unsupported'
+          });
+        }
+      };
+      return test(0);
+    };
+    this.addSites = function(sites) {
+      var newSites, site, _fn;
+      newSites = document.createDocumentFragment();
+      _fn = function(address, site) {
+        var newSite;
+        newSite = make('div', {
+          "class": 'site',
+          'data-site': address
+        }, make('input', {
+          "class": 'site_enabled',
+          type: 'checkbox',
+          checked: site.enabled || false,
+          events: {
+            click: function() {
+              window.enableSite(address, this.checked);
+              return window.saveSites();
+            }
+          }
+        }), make('input', {
+          "class": 'site_address',
+          type: 'url',
+          value: address || '',
+          events: {
+            change: function() {
+              return this.blur();
+            },
+            blur: function() {
+              delete window.sites[address];
+              delete window.moreResults[address];
+              this.parentElement.setAttribute('data-site', this.value);
+              this.setAttribute('value', this.value);
+              window.saveSites();
+              return window.newSite(this.value);
+            }
+          }
+        }), make('button', {
+          "class": 'site_remove'
+        }, '?', {
+          events: {
+            click: function() {
+              site = this.parentElement;
+              site.parentElement.removeChild(site);
+              delete window.sites[address];
+              return window.saveSites();
+            }
+          }
+        }), make('div', {
+          style: 'display: flex; width: 100%; padding: 0.2em; box-sizing: border-box; background: rgba(0,0,0,0.3);'
+        }, make('input', {
+          type: 'text',
+          placeholder: 'Username / User ID',
+          title: 'Username (or User ID for Gelbooru)',
+          value: site.username || '',
+          style: 'flex: 1; margin-right: 0.2em; font-size: 80%; padding: 0.4em;',
+          events: {
+            change: function() {
+              window.sites[address].username = this.value;
+              window.saveSites();
+            }
+          }
+        }), make('input', {
+          type: 'password',
+          placeholder: 'API Key / Hash',
+          title: 'API Key (or Password Hash for Moebooru)',
+          value: site.api_key || '',
+          style: 'flex: 1; font-size: 80%; padding: 0.4em;',
+          events: {
+            change: function() {
+              window.sites[address].api_key = this.value;
+              window.saveSites();
+            }
+          }
+        })), make('div', {
+          "class": 'site_status'
+        }));
+        return newSites.insertBefore(newSite, newSites.firstChild);
+      };
+      for (site in sites) {
+        _fn(site, sites[site]);
+      }
+      return S('#sites').insertBefore(newSites, S('#new_site').nextSibling);
+    };
+    this.newSite = function(site) {
+      var site_status;
+      site_status = S("#sites [data-site=\"" + site + "\"] .site_status");
+      site_status.innerHTML = '<div class="loading"></div>';
+      return window.detectSite(site, function(error, type) {
+        if (error != null) {
+          return window.siteStatus(site, error.status);
+        } else {
+          window.sites[site] = {
+            type: type
+          };
+          window.enableSite(site);
+          window.saveSites();
+          return window.siteStatus(site);
+        }
+      });
+    };
+    this.enableSite = function(site, enable) {
+      var page, tags, _base2, _i, _ref1;
+      if (enable == null) {
+        enable = true;
+      }
+      window.sites[site].enabled = S("#sites [data-site='" + site + "'] .site_enabled").checked = enable;
+      tags = window.previousSearch + (function() {
+        switch (S('#highest_rating').value) {
+          case 'safe':
+            return ' rating:safe';
+          case 'questionable':
+            return ' -rating:explicit';
+          default:
+            return '';
+        }
+      })();
+      if (enable) {
+        for (page = _i = 0, _ref1 = window.resultsPage - 1; 0 <= _ref1 ? _i <= _ref1 : _i >= _ref1; page = 0 <= _ref1 ? ++_i : --_i) {
+          if ((_base2 = window.moreResults)[site] != null ? _base2[site] : _base2[site] = true) {
+            window.getResults(window.apis[window.sites[site].type], site, tags, page, 100, window.mergeResults);
+          }
+        }
+      }
+      return window.saveSites();
+    };
+    this.saveSites = function() {
+      return localStorage.setItem('sites', JSON.stringify(window.sites));
+    };
+    /* ==========================================================================
+       LANGUAGE: JavaScript
+       FUNCTION: Keyboard Controls & User Interaction.
+                 Sets up the event listeners that detect when you press the 
+                 Left/Right arrow keys for navigation, or Middle Click to zoom.
+       ========================================================================== */
+    action(window, 'load', function() {
+      var COMMA, LEFT, PERIOD, RIGHT, _ref1;
+      _ref1 = [39, 190, 37, 188], RIGHT = _ref1[0], PERIOD = _ref1[1], LEFT = _ref1[2], COMMA = _ref1[3];
+      
+      action(document, 'keydown', function(event) {
+        if (document.activeElement && document.activeElement.tagName === 'VIDEO') {
+          if (event.keyCode === 37 || event.keyCode === 39) {
+            event.preventDefault();
+          }
+        }
+      });
+
+      action(document, 'keyup', function(event) {
+        var amount;
+        if (S('input:focus') == null) {
+          amount = event.shiftKey ? 10 : 1;
+          switch (event.keyCode) {
+            case RIGHT:
+            case PERIOD:
+              window.move(amount);
+              break;
+            case LEFT:
+            case COMMA:
+              window.move(amount * -1);
+              break;
+            default:
+              return;
+          }
+          return event.preventDefault();
+        }
+      });
+      action(document, 'mousedown', function(event) {
+        if (event.button === 1 && S('input:focus') == null) {
+          window.zoom(0, event.clientX, event.clientY);
+          return event.preventDefault();
+        }
+      });
+      
+      action('#min_score, #min_favs', 'keyup', function(event) {
+        if (event.keyCode === 13) {
+          window.search(S('#search').value, true);
+          return this.blur();
+        }
+      });
+      action('#min_score_active, #min_favs_active', 'change', function() {
+        window.search(S('#search').value, true);
+      });
+    });
+/* ==========================================================================
+   LANGUAGE: JavaScript
+   FUNCTION: Media Downloading & Display Engine.
+             `getBlob` safely fetches the actual image/video data from the server.
+             `download` routes the file to the right pipeline (video vs image).
+             `display` builds the HTML <video> or <img> tags, puts them on the screen, 
+             and handles dead links/errors.
+   ========================================================================== */
+// --- VERSION 2026.03.30.01 ---
+this.getBlob = function(url, callbacks) {
+  var xhr, _ref1;
+
+  if (url) {
+    var urlParts = url.split('?');
+    var cleanUrl = urlParts[0];
+    var queryString = urlParts.length > 1 ? '?' + urlParts[1] : '';
+
+    var isRealbooru = cleanUrl.includes('realbooru.com');
+    var isRule34 = cleanUrl.includes('rule34.xxx');
+
+    if ((isRealbooru || isRule34) && !callbacks._isRetry) {
+      
+      if (isRealbooru) {
+        cleanUrl = cleanUrl.replace('realbooru.com//images/', 'realbooru.com/images/');
+      }
+      
+      url = cleanUrl + queryString;
+
+      var originalError = callbacks.error;
+
+      var attemptRetry = function(currentUrl, extensions, index, cbOriginalError) {
+        if (index >= extensions.length) {
+          console.error("? Final Failure: " + currentUrl);
+          if (cbOriginalError) cbOriginalError.call({status: 404}, new Error("Dead Link"));
+          return;
+        }
+
+        var nextCleanUrl = cleanUrl.replace(/\.[a-z0-9]+$/i, extensions[index]);
+        var nextUrl = nextCleanUrl + queryString; 
+
+        setTimeout(function() {
+          console.warn("?? Extension Retry [" + (index + 1) + "/" + extensions.length + "]: " + nextUrl);
+          window.getBlob(nextUrl, {
+            _isRetry: true, 
+            progress: callbacks.progress,
+            load: function(res) {
+              if (callbacks.load) callbacks.load.call(this, res);
+            },
+            error: function(err) {
+              attemptRetry(currentUrl, extensions, index + 1, cbOriginalError);
+            }
+          });
+        }, 250);
+      };
+
+      callbacks.error = function(err) {
+        if (this.status === 404) {
+          var extensions = ['.jpeg', '.jpg', '.png', '.gif', '.webm', '.mp4', '.webp'];
+          attemptRetry(url, extensions, 0, originalError);
+        } else {
+          return originalError ? originalError.call(this, err) : void 0;
+        }
+      };
+      console.log("?? Initial Attempt: " + url);
+    } else {
+      url = cleanUrl + queryString;
+    }
+  }
+
+  if ((_ref1 = window.currentDownload) != null) {
+    _ref1.abort();
+  }
+
+  window.currentDownload = xhr = new XMLHttpRequest();
+  try {
+    xhr.responseType = 'blob';
+  } catch (_error) {
+    try {
+      xhr.responseType = 'arraybuffer';
+    } catch (_error) {
+      xhr.overrideMimeType('text\/plain; charset=x-user-defined');
+    }
+  }
+
+  window.debugMedia('getBlob:start', {
+    url: url
+  });
+  xhr.open('GET', url, true);
+  
+  xhr.onerror = function(error) {
+    var _ref2;
+    window.debugMedia('getBlob:error', {
+      url: url,
+      responseURL: this.responseURL,
+      status: this.status
+    });
+    this.responseURL = this.responseURL || url;
+    return (_ref2 = callbacks.error) != null ? _ref2.call(this, error) : void 0;
+  };
+
+  xhr.onprogress = function(event) {
+    return typeof callbacks.progress === "function" ? callbacks.progress('Downloading', event.lengthComputable ? event.loaded / event.total : void 0) : void 0;
+  };
+
+  xhr.onload = function() {
+    window.debugMedia('getBlob:load', {
+      url: url,
+      responseURL: this.responseURL || url,
+      status: this.status,
+      contentType: this.getResponseHeader('Content-Type')
+    });
+    if (this.status === 200) {
+      console.log("? SUCCESS: Loaded " + url);
+      
+      var blob, res;
+      if (callbacks.load != null) {
+        res = {
+          response: (function() {
+            switch (Object.prototype.toString.call(this.response)) {
+              case '[object Blob]': return this.response;
+              case '[object ArrayBuffer]':
+                return new Blob([this.response], { type: this.getResponseHeader('Content-Type') });
+              default:
+                if (typeof WebKitBlobBuilder !== "undefined") {
+                   blob = new WebKitBlobBuilder();
+                   blob.append(this.response);
+                   return blob.getBlob(this.getResponseHeader('Content-Type'));
+                }
+                return this.response;
+            }
+          }).call(this),
+          responseURL: this.responseURL || url,
+          status: this.status,
+          blobType: (this.response != null ? this.response.type : void 0),
+          blobSize: (this.response != null ? this.response.size : void 0)
+        };
+        window.debugMedia('getBlob:blob', {
+          url: url,
+          responseURL: res.responseURL,
+          blobType: res.blobType != null ? res.blobType : (res.response != null ? res.response.type : void 0),
+          blobSize: res.blobSize != null ? res.blobSize : (res.response != null ? res.response.size : void 0)
+        });
+        return callbacks.load.call(res);
+      }
+    } else {
+      if (callbacks.error) callbacks.error.call(this, new Error(this.status));
+    }
+  };
+  
+  return xhr.send();
+};
+    this.download = function(file, callbacks) {
+      var animated, ext, gif, hasTag, pixel_art, url, video;
+      if (callbacks == null) {
+        callbacks = {};
+      }
+      if (file.video != null) {
+        window.getBlob(file.video, callbacks);
+        if (callbacks.progress != null) {
+          S('#display-file').value = 'video';
+          return S('#display-file-default').classList.add('hide');
+        }
+      } else {
+        hasTag = function(tag) {
+          return file.tags.indexOf(tag) !== -1;
+        };
+        var cleanOriginal = file.original.split('?')[0];
+        ext = cleanOriginal.split('.').pop().toLowerCase();
+        
+        pixel_art = hasTag('pixel_art') || hasTag('oekaki');
+        // Keep animated GIFs on the image pipeline; only true video types use <video>.
+        video = ext === 'webm' || ext === 'mp4' || hasTag('webm') || hasTag('mp4') || hasTag('video');
+        gif = ext === 'gif' || hasTag('gif') || hasTag('animated_gif');
+        animated = hasTag('animated') || hasTag('animated_gif');
+        
+        window.log("Downloading file", false, {
+          filename: file.original,
+          extension: ext,
+          pixel_art: pixel_art,
+          video: video,
+          gif: gif,
+          animated: animated
+        });
+        url = file[localStorage.getItem('default_file_source')] != null ? localStorage.getItem('default_file_source') : 'original';
+        
+        if (video) url = 'original'; 
+        window.debugMedia('download:route', {
+          original: file.original,
+          sample: file.sample,
+          ext: ext,
+          pixel_art: pixel_art,
+          video: video,
+          gif: gif,
+          animated: animated,
+          defaultSource: localStorage.getItem('default_file_source'),
+          chosenUrlKey: url
+        });
+
+        window.getBlob(file[url], callbacks);
+        if (callbacks.progress != null) {
+          S('#display-file').value = url;
+          if (url === localStorage.getItem('default_file_source') || video) {
+            return S('#display-file-default').classList.add('hide');
+          }
+        }
+      }
+    };
+   this.move = function(amount) {
+      var edge, _ref1;
+      window.index = (window.index || 0) + amount;
+      if (window.index < 0) {
+        window.index += window.results.length;
+      } else if (window.index > window.results.length - 1) {
+        window.index -= window.results.length;
+      }
+      window.updateResultsCounter();
+      window.currentFile = window.files[window.results[window.index]];
+      window.updateThumbs();
+      if ((_ref1 = window.currentThumb) != null) {
+        _ref1.scrollIntoView(false);
+      }
+      S('#loading-file-percent').innerHTML = 'Connecting...';
+      window.download(window.currentFile, {
+        error: function(error) {
+          return window.display(error);
+        },
+        progress: function(text, done) {
+          return S('#loading-file-percent').innerHTML = done != null ? done < 1 ? text + " (" + (Math.floor(done * 100)) + "%)" : 'Wait for it...' : text;
+        },
+        load: function() {
+          var preload;
+          preload = amount === 0 ? window.index + 1 : window.index + Math.sign(amount);
+          if (preload < 0) {
+            preload = window.results.length - 1;
+          } else if (preload > window.results.length - 1) {
+            preload = 0;
+          }
+          window.download(window.files[window.results[preload]]);
+          return window.display.call(this);
+        }
+      });
+      window.loadingFile = true;
+      clearTimeout(window.loadTimer);
+      window.loadTimer = after(0.2, function() {
+        if (window.loadingFile) {
+          return window.show('#loading-file', 'loadingFile', 'timeout');
+        }
+      });
+      edge = Math.min(window.results.length / 2, 50);
+      if (window.results.length - window.index + 1 < edge) {
+        return window.search();
+      }
+    };
+    this.aspect = function() {
+      var content, note, notes, rect, result, view, windowAspect, _i, _len, _ref1;
+      windowAspect = window.innerHeight / window.innerWidth;
+      view = S('.view:last-child');
+      if (view != null) {
+        content = S(view, 'img, video');
+      }
+      if (content != null) {
+        window.currentFile.aspect = window.currentFile.height / window.currentFile.width;
+        window.log("aspect", false, {
+          window: {
+            innerHeight: window.innerHeight,
+            innerWidth: window.innerWidth
+          },
+          view: {
+            clientHeight: view.clientHeight,
+            clientWidth: view.clientWidth,
+            scrollWidth: view.scrollWidth,
+            scrollHeight: view.scrollHeight
+          },
+          content: {
+            clientHeight: content.clientHeight,
+            clientWidth: content.clientWidth,
+            naturalHeight: window.currentFile.height,
+            naturalWidth: window.currentFile.width,
+            aspect: window.currentFile.aspect
+          }
+        });
+        content.classList.remove('tall', 'wide', 'small');
+      // Check if the image's natural size is smaller than the window
+        if (window.currentFile.height < innerHeight && window.currentFile.width < innerWidth) {
+          content.classList.add('small');
+          // We intentionally do NOT add 'tall' or 'wide' here so it doesn't stretch
+        } else {
+          // If the image is larger than the window, scale it down to fit
+          if (!(view.classList.contains('natural') && content.clientHeight > view.clientHeight && content.clientWidth > view.clientWidth)) {
+            content.classList.add(window.currentFile.aspect > windowAspect ? 'tall' : 'wide');
+          }
+        }
+        window.contentZoom = Math.floor(content.clientHeight / window.currentFile.height * 100);
+        rect = content.getBoundingClientRect();
+        notes = S(view, '.notes');
+        notes.style.top = (rect.top < 0 ? 0 : Math.round(rect.top)) + "px";
+        notes.style.left = (rect.left < 0 ? 0 : Math.round(rect.left)) + "px";
+        notes.style.height = (Math.round(rect.height)) + "px";
+        notes.style.width = (Math.round(rect.width)) + "px";
+        _ref1 = notes.contentDocument.querySelectorAll('.note');
+        for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+          note = _ref1[_i];
+          result = window.currentFile.results[note.getAttribute('data-result')];
+          note.style.fontSize = ((content.clientHeight / result.height) * 100) + "%";
+        }
+      } else {
+        window.contentZoom = 100;
+      }
+      return window.updateTitle();
+    };
+    this.zoom = function(amount, x, y) {
+      var newx, newy, relScrX, relScrY, view;
+      view = S('.view:last-child');
+      view.classList.toggle('natural');
+      S('#sidebar').classList.add('hide');
+      S('#topbar').classList.add('hide');
+      relScrX = x / view.clientWidth;
+      relScrY = y / view.clientHeight;
+      newx = Math.round((view.scrollWidth * (x / view.clientWidth)) - (view.scrollWidth - view.clientWidth));
+      newy = Math.round((view.scrollHeight * (y / view.clientHeight)) - (view.scrollHeight - view.clientHeight));
+      window.log('zoom', false, {
+        event: {
+          x: x,
+          y: y
+        },
+        scroll: {
+          width: view.scrollWidth,
+          height: view.scrollHeight
+        },
+        client: {
+          width: view.clientWidth,
+          height: view.clientHeight
+        },
+        zoom: {
+          x: newx,
+          y: newy
+        }
+      });
+      view.scrollTo(newx, newy);
+      return window.aspect();
+    };
+    this.addNotes = function(site) {
+      var checked, element, note, result, view, visible, _fn, _i, _len, _ref1, _ref2;
+      view = S('.view:last-child');
+      var body = make('tbody');
+      result = window.currentFile.results[site];
+      _ref1 = result.notes;
+      _fn = function(body, element) {
+        return body.appendChild(make('tr', make('td', make('input', {
+          type: 'checkbox',
+          "class": 'note-display',
+          checked: checked,
+          events: {
+            click: function() {
+              if (this.checked) {
+                return element.classList.remove('hide');
+              } else {
+                return element.classList.add('hide');
+              }
+            }
+          }
+        })), make('td', {
+          "class": 'note-body',
+          innerText: element.textContent
+        })));
+      };
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        note = _ref1[_i];
+        _ref2 = note.is_active && note.height > 0 && note.width > 0 ? ['', true] : ['hide', false], visible = _ref2[0], checked = _ref2[1];
+        element = make('div', {
+          "class": "note " + visible
+        }, note.body, {
+          'data-result': site,
+          style: "top:    " + (note.y / result.height * 100) + "%;\nleft:   " + (note.x / result.width * 100) + "%;\nheight: " + (note.height / result.height * 100) + "%;\nwidth:  " + (note.width / result.width * 100) + "%;"
+        });
+        S(view, '.notes').contentDocument.body.appendChild(element);
+        _fn(body, element);
+      }
+      S('#results-notes').replaceChild(body, S('#results-notes tbody'));
+      if (S('#display-notes').disabled) {
+        window.viewOption('.view:last-child .notes', '#display-notes', 'hide', 'remove');
+        S('#display-notes').disabled = false;
+      }
+      
+      if (body.children.length > 0) {
+        view.querySelector('.notes').style.pointerEvents = 'auto';
+      }
+      
+      return window.aspect();
+    };
+    this.display = function(error) {
+      var content, i, notes, oldviews, subtype, type, view, _ref1;
+      window.loadingFile = false;
+      oldviews = document.querySelectorAll('.view');
+      
+      if ((error != null) === false && this.status === 200) {
+        
+        var mimeType = this.response.type || '';
+        
+        // 1. TRAP HTML PAGES: If a server returns an HTML page instead of media, it's a dead link.
+        if (mimeType.indexOf('html') !== -1) {
+             return window.display("Dead Link (Server returned HTML instead of media)");
+        }
+
+        // 2. DETECT VIDEOS: Check tags and the resolved URL extension
+        var ext, isGif, isVideo, realExt;
+        isVideo = false;
+        ext = '';
+        realExt = '';
+        isGif = false;
+        if (window.currentFile) {
+           var hasTag = function(tag) { return window.currentFile.tags.indexOf(tag) !== -1; };
+           ext = (window.currentFile.original || '').split('?')[0].split('.').pop().toLowerCase();
+           realExt = (this.responseURL || '').split('?')[0].split('.').pop().toLowerCase();
+           isGif = ext === 'gif' || realExt === 'gif' || hasTag('gif') || hasTag('animated_gif');
+           isVideo = !isGif && (ext === 'webm' || ext === 'mp4' || realExt === 'mp4' || realExt === 'webm' || hasTag('webm') || hasTag('mp4') || hasTag('video'));
+        }
+
+        if (isVideo) mimeType = 'video/mp4';
+        _ref1 = mimeType.split('/'), type = _ref1[0], subtype = _ref1[1];
+        window.debugMedia('display:classify', {
+          error: error,
+          status: this.status,
+          responseURL: this.responseURL,
+          mimeType: mimeType,
+          type: type,
+          subtype: subtype,
+          ext: ext,
+          realExt: realExt,
+          isGif: isGif,
+          isVideo: isVideo
+        });
+        
+        var directUrl = this.responseURL || (window.currentFile ? window.currentFile.original : '');
+        var blobUrl = window.URL.createObjectURL(this.response);
+        
+        content = (function() {
+          switch (type) {
+            case 'video':
+              return make('video', {
+                "class": 'center content',
+                autoplay: true,
+                loop: true,
+                controls: true,
+                src: blobUrl, 
+                events: {
+                  error: function() {
+                    window.debugMedia('video:error', {
+                      src: this.currentSrc || this.src,
+                      readyState: this.readyState,
+                      networkState: this.networkState,
+                      code: this.error && this.error.code
+                    });
+                    window.display("Video failed to decode/load");
+                  },
+                  ended: function() {
+                    var playPromise;
+                    this.currentTime = 0;
+                    playPromise = this.play();
+                    if ((playPromise != null ? playPromise.catch : void 0) != null) {
+                      playPromise.catch(function() {});
+                    }
+                    return playPromise;
+                  },
+                  loadedmetadata: function() {
+                    window.debugMedia('video:loadedmetadata', {
+                      src: this.currentSrc || this.src,
+                      width: this.videoWidth,
+                      height: this.videoHeight
+                    });
+                    if (window.currentFile) {
+                        window.currentFile.height = this.videoHeight;
+                        window.currentFile.width = this.videoWidth;
+                    }
+                    return window.aspect();
+                  },
+                  canplaythrough: function onCanPlayThrough() {
+                    window.debugMedia('video:canplaythrough', {
+                      src: this.currentSrc || this.src
+                    });
+                    this.removeEventListener('canplaythrough', onCanPlayThrough);
+                    view.classList.remove('hide');
+                    clearTimeout(window.loadTimer);
+                    return window.show('#loading-file', 'loadingFile');
+                  }
+                }
+              });
+            case 'image':
+              return make('img', {
+                "class": 'center content',
+                src: blobUrl,
+                events: {
+                  error: function() {
+                    if (this.src.slice(0, 5) === 'blob:') {
+                      window.debugMedia('image:error:blob', {
+                        src: this.src,
+                        directUrl: directUrl
+                      });
+                      this.src = directUrl;
+                    } else {
+                      window.debugMedia('image:error:direct', {
+                        src: this.src,
+                        directUrl: directUrl
+                      });
+                      window.display("Image failed to decode/load");
+                    }
+                  },
+                  load: function() {
+                    window.debugMedia('image:load', {
+                      naturalWidth: this.naturalWidth,
+                      naturalHeight: this.naturalHeight,
+                      src: this.currentSrc || this.src
+                    });
+                    if (window.currentFile) {
+                        window.currentFile.height = this.naturalHeight;
+                        window.currentFile.width = this.naturalWidth;
+                    }
+                    window.aspect();
+                    view.classList.remove('hide');
+                    clearTimeout(window.loadTimer);
+                    return window.show('#loading-file', 'loadingFile');
+                  }
+                }
+              });
+            default:
+              nextFrame(function() {
+                view.classList.remove('hide');
+                return window.show('#loading-file', 'loadingFile');
+              });
+              return make('div', { "class": 'center' }, mimeType + "<br>I don't know how to display this file ??<br>You can try saving and opening this file in another application to view it");
+          }
+        }).call(this);
+
+        S('#save_file').href = blobUrl;
+        S('link[rel="shortcut icon"]').href = type === 'image' ? blobUrl : '';
+        S('#save_file').download = directUrl.slice(directUrl.lastIndexOf('/') + 1) || 'file';
+
+        if (window.currentFile != null) {
+          if (window.currentFile.tags.indexOf('pixel_art') + window.currentFile.tags.indexOf('oekaki') > -1) {
+            content.classList.add('pixel_art');
+          }
+          window.currentFile.blob = this.response;
+        }
+      } else {
+        content = (function() {
+          if (error != null) {
+            switch (error) {
+              case 'no sites':
+                return make('div', { "class": 'center' }, "You don't have any sites enabled ??");
+              case 'no results':
+                return make('div', { "class": 'center' }, "Sorry, no results were found ??");
+              default:
+                return make('div', { "class": 'center' }, error + "<br>I couldn't download the file ??", make('button', 'Try again', { events: { click: function(event) { window.move(0); return event.preventDefault(); } } }));
+            }
+          } else {
+            return make('div', { "class": 'center' }, (this.status) + "<br>I couldn't download the file ??", make('button', 'Try again', { events: { click: function(event) { window.move(0); return event.preventDefault(); } } }));
+          }
+        }).call(this);
+        delete window.currentFile;
+        S('link[rel="shortcut icon"]').href = S('#save_file').download = '';
+        nextFrame(function() {
+          view.classList.remove('hide');
+          return window.show('#loading-file', 'loadingFile');
+        });
+      }
+      
+      view = make('div', { "class": 'view center hide fade-in' }, content, {
+        events: {
+          transitionend: function() {
+            var oldview, _i, _len, _ref2, _results;
+            _results = [];
+            for (_i = 0, _len = oldviews.length; _i < _len; _i++) {
+              oldview = oldviews[_i];
+              if (!(oldview != null)) continue;
+              
+              if ((_ref2 = oldview.children[0]) != null) {
+                  if (_ref2.tagName === 'VIDEO') {
+                      _ref2.pause();
+                      _ref2.removeAttribute('src');
+                      _ref2.load();
+                  }
+                  if (_ref2.src && _ref2.src.slice(0, 5) === 'blob:') {
+                      window.URL.revokeObjectURL(_ref2.src);
+                  }
+              }
+
+              try { _results.push(document.body.removeChild(oldview)); } catch (_error) { error = _error; }
+            }
+            return _results;
+          }
+        }
+      });
+      
+      notes = make('iframe', {
+        "class": 'notes hide fade-in-out',
+        sandbox: '',
+        events: { touchstart: function(event) { return console.log('touch iframe'); } }
+      });
+      view.appendChild(notes);
+      clearTimeout(window.loadTimer);
+      document.body.appendChild(view);
+      
+      notes.contentDocument.head.appendChild(make('style', "html, body { overflow: hidden } /* Fixes white borders on old android */\n:link\n	{\n	color: inherit;\n	text-decoration: none;\n	}\n.hide { display: none }\n.note\n	{\n	font-family: sans-serif;\n	white-space: pre-line;\n	position: absolute;\n	text-shadow:\n		 1px  1px 0.1em white,\n		 1px  1px 0.2em white,\n		-1px  1px 0.1em white,\n		-1px  1px 0.2em white,\n		 1px -1px 0.1em white,\n		 1px -1px 0.2em white,\n		-1px -1px 0.1em white,\n		-1px -1px 0.2em white,\n		 0    0   0.5em black,\n		 0    0   0.5em black;\n	}\n.note *\n	{\n	background: none !important;\n	border:     none !important;\n	}\ntn\n	{\n	color: hsl(0,0%,25%);\n	font-size: 75%;\n	}\n" + (((function() {
+        var _i, _results;
+        _results = [];
+        for (i = _i = 1; _i <= 7; i = ++_i) {
+          _results.push("font[size=\"+" + i + "\"] { font-size: " + (100 + i * 25) + "% }");
+        }
+        return _results;
+      })()).join('\n'))));
+      
+      return window.updateInfo();
+    };
+    action(window, 'load', function() {
+      action(window, 'resize', function() {
+        window.aspect();
+        return window.updateThumbs();
+      });
+      action('#search', 'change', function() { window.search(this.value, true); return this.blur(); });
+      action('#search_meta', 'change', function() { window.search(null, true); return this.blur(); });
+      action('#search_exclude', 'change', function() { window.search(null, true); return this.blur(); });
+      action('#highest_rating', 'change', function() {
+        window.search(S('#search').value, true);
+        return this.blur();
+      });
+      action('#sort_order', 'change', function() {
+        window.search(S('#search').value, true);
+        return this.blur();
+      });
+      action('#apply_search', 'click', function() {
+        window.search(S('#search').value, true);
+      });
+      action('#date_from', 'keyup', function(event) {
+        if (event.keyCode === 13) {
+          window.search(S('#search').value, true);
+          return this.blur();
+        }
+      });
+      action('#date_to', 'keyup', function(event) {
+        if (event.keyCode === 13) {
+          window.search(S('#search').value, true);
+          return this.blur();
+        }
+      });
+      action('#go_to_first', 'click', function() {
+        return window.move(window.index = 0);
+      });
+      action('#go_previous', 'click', function() {
+        return window.move(-1);
+      });
+      action('#go_next', 'click', function() {
+        return window.move(1);
+      });
+      action('#display-file', 'change', function() {
+        if (this.value !== localStorage.getItem('default_file_source')) {
+          window.show('#display-file-default');
+        } else {
+          S('#display-file-default').classList.add('hide');
+        }
+        S('#loading-file-percent').innerHTML = 'Connecting...';
+        window.getBlob(window.currentFile[this.value], {
+          error: function(error) {
+            return window.display(error);
+          },
+          progress: function(text, done) {
+            return S('#loading-file-percent').innerHTML = done != null ? done < 1 ? text + " (" + (Math.floor(done * 100)) + "%)" : 'Wait for it...' : text;
+          },
+          load: window.display
+        });
+        window.loadingFile = true;
+        clearTimeout(window.loadTimer);
+        return window.loadTimer = after(0.2, function() {
+          if (window.loadingFile) {
+            return window.show('#loading-file', 'loadingFile', 'timeout');
+          }
+        });
+      });
+      action('#display-file-default', 'click', function() {
+        localStorage.setItem('default_file_source', S('#display-file').value);
+        return this.classList.add('hide');
+      });
+      action('#display-background', 'change', function() {
+        return S('.view:last-child :first-child').style.backgroundColor = this.value;
+      });
+      action('#display-scaling', 'click', function() {
+        return window.viewOption('.view:last-child .content', '#display-scaling', 'pixel_art', 'toggle');
+      });
+      action('#display-invert', 'click', function() {
+        return window.viewOption('.view:last-child .content', '#display-invert', 'invert', 'toggle');
+      });
+      action('#display-notes', 'click', function() {
+        return window.viewOption('.view:last-child .notes', '#display-notes', 'hide', 'toggle');
+      });
+      action(document, 'click', function(event) {
+        if (S('input:focus, :link:hover') == null) {
+          return event.preventDefault();
+        }
+      });
+      action(document, 'contextmenu', function(event) {
+        if (S('input:focus') == null) {
+          return event.preventDefault();
+        }
+      });
+      action(document, 'mousemove', function(event) {
+        if ((S('.frame:hover') == null) && event.buttons === 0) {
+          if (event.y < S('#topbar').clientHeight) {
+            return window.showPanel('#topbar', true);
+          } else {
+            window.showPanel('#topbar', false);
+            return window.showPanel('#sidebar', (function() {
+              switch (localStorage['interface_side']) {
+                case 'left':
+                  return event.x < (S('#sidebar').clientWidth / 4);
+                case 'right':
+                  return event.x > window.innerWidth - (S('#sidebar').clientWidth / 4);
+              }
+            })());
+          }
+        }
+      });
+      action('#topbar', 'scroll', window.updateThumbs);
+      action('#topbar', 'mousewheel', function(event) {
+        var sign;
+        sign = (event.wheelDelta || event.detail) > 0 ? -1 : 1;
+        this.scrollLeft += window.currentThumb.clientWidth * sign;
+        return event.preventDefault();
+      });
+      action('.fade-in-out, .fade-out', 'transitionend', function() {
+        if (this.classList.contains('hide')) {
+          return this.classList.add('close', 'hide');
+        }
+      });
+      return action('label[for]', 'click', function() {
+        return S('#' + this.htmlFor).dispatchEvent(new MouseEvent('mousedown'));
+      });
+    });
+    this.viewOption = function(content, button, option, state) {
+      var set;
+      content = S(content);
+      button = S(button);
+      set = content != null ? (state != null ? content.classList[state](option) : void 0, content.classList.contains(option)) : false;
+      button.innerHTML = button.getAttribute("data-text-" + set);
+      return button.title = button.getAttribute("data-title-" + set);
+    };
+    this.showPanel = function(query, state, force) {
+      var allow, panel, panels, _i, _len;
+      if (!(panel = S(query))) {
+        return;
+      }
+      allow = force || query === '#settings' || (S('#settings.hide') != null);
+      state = (function() {
+        switch (state) {
+          case void 0:
+            return 'toggle';
+          case true:
+            return 'remove';
+          case false:
+            return 'add';
+        }
+      })();
+      if (allow) {
+        panel.classList[state]('hide');
+        if (!panel.classList.contains('hide')) {
+          panels = ['#settings', '#sidebar', '#topbar'];
+          if (query === '#topbar') {
+            if (window.results.length > 0) {
+              window.updateThumbs();
+              panels.splice(panels.indexOf(query), 1);
+            }
+          } else {
+            panels.splice(panels.indexOf(query), 1);
+          }
+          for (_i = 0, _len = panels.length; _i < _len; _i++) {
+            panel = panels[_i];
+            S(panel).classList.add('hide');
+          }
+        }
+        if (S('#sidebar.hide') != null) {
+          var searchInput = S('#search');
+          if (searchInput != null) {
+             return searchInput.blur();
+          }
+        }
+      }
+    };
+    this.updateTitle = function() {
+      var counter, more, site;
+      var baseTitle = window.currentFile != null ? (counter = thousands(window.index + 1) + '/' + thousands(window.results.length), more = ((function() {
+        var _results;
+        _results = [];
+        for (site in window.moreResults) {
+          if (window.moreResults[site]) {
+            _results.push('+');
+          }
+        }
+        return _results;
+      })())[0] || '', (counter + more) + " " + (window.currentFile.checksum || 'Loading...') + " [" + (window.contentZoom || 100) + "%]") : "No results...";
+      return document.title = baseTitle + " | v1.405";
+    };
+    this.updateInfo = function() {
+      var data, has_notes, id, prop, props, result, site, tagsBody, url, value, values, xhr, _fn, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref1, _ref2, _ref3, _ref4, _results;
+      if (window.currentFile == null) {
+        _ref1 = ['#results-counter', '#save_file', '#tags', '#results-site', '#results-source', '#results-uploaded', '#results-score', '#results-favorites', '#display-options'];
+        for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+          id = _ref1[_i];
+          S(id).classList.add('hide');
+        }
+        return;
+      }
+      window.show('#results-counter, #save_file, #display-options', true);
+      window.viewOption('.view:last-child .content', '#display-scaling', 'pixel_art');
+      window.viewOption('.view:last-child .content', '#display-invert', 'invert');
+      window.viewOption('.view:last-child .notes', '#display-notes', 'hide');
+      S('#display-notes').disabled = true;
+      _ref2 = ['original', 'sample', 'video'];
+      for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+        url = _ref2[_j];
+        S("#display-file option[value=" + url + "]")[(window.currentFile[url] != null ? 'remove' : 'set') + "Attribute"]('disabled', true);
+      }
+      has_notes = false;
+      _ref3 = window.currentFile.results;
+      for (site in _ref3) {
+        result = _ref3[site];
+        if (!(result.notes != null)) {
+          continue;
+        }
+        has_notes = true;
+        S('#results-notes tbody').innerHTML = 'Loading...';
+        switch (getType(result.notes)) {
+          case '[object String]':
+            xhr = new XMLHttpRequest();
+            xhr.open('GET', result.notes);
+            xhr.error = function() {
+              return window.show('#results-notes', false);
+            };
+            xhr.onload = function() {
+              result.notes = window.apis[window.sites[site].type].notes(this.response);
+              return window.addNotes(site);
+            };
+            xhr.send();
+            break;
+          case '[object Array]':
+            window.addNotes(site);
+        }
+      }
+      window.show('#results-notes', has_notes);
+      tagsBody = make('tbody');
+      _ref4 = (window.currentFile.rating != null ? window.currentFile.tags.concat(["rating:" + window.currentFile.rating]) : window.currentFile.tags);
+      _fn = function(tag) {
+        var callback, sign, state, type, _ref5;
+        _ref5 = __indexOf.call(window.getTags(S('#search').value), tag) >= 0 ? [
+          'included', '?', 'Remove tag from current search', function() {
+            return window.search(window.removeTag(tag));
+          }
+        ] : [
+          '', '+', 'Add tag to current search', function() {
+            return window.search((S('#search').value) + " " + tag);
+          }
+        ], state = _ref5[0], sign = _ref5[1], title = _ref5[2], callback = _ref5[3];
+        type = '<span class="emoji">' + ((function() {
+          switch (window.tags[tag].type) {
+            case 'artist':
+              return '?';
+            case 'character':
+              return '?';
+            case 'copyright':
+              return 't';
+            default:
+              return '';
+          }
+        })()) + '</span> ';
+        return tagsBody.appendChild(make('tr', make('td', {
+          "class": 'tag-exclude'
+        }, make('button', '-', {
+          title: 'Exclude tag from current search',
+          events: {
+            click: function() {
+              return window.search(window.addTag("-" + tag, window.removeTag(tag)));
+            }
+          }
+        })), make('td', {
+          "class": 'tag-name ' + state
+        }, make('button', type + tag.replace(/_/g, '<wbr>_'), {
+          title: 'Start new search with this tag',
+          events: {
+            click: function() {
+              return window.search(tag);
+            }
+          }
+        })), make('td', {
+          "class": 'tag-include'
+        }, make('button', sign, {
+          title: title,
+          events: {
+            click: callback
+          }
+        })), make('td', {
+          "class": 'tag-total'
+        }, thousands(window.tags[tag].total))));
+      };
+      for (_k = 0, _len2 = _ref4.length; _k < _len2; _k++) {
+        tag = _ref4[_k];
+        _fn(tag);
+      }
+      S('#tags').replaceChild(tagsBody, S('#tags tbody'));
+      window.show('#tags');
+      props = {
+        source: 'source',
+        created: 'uploaded',
+        page: 'site',
+        score: 'score',
+        favorites: 'favorites'
+      };
+      _results = [];
+      for (prop in props) {
+        table = S("#results-" + props[prop]);
+        props[prop] = {};
+        if (((function() {
+          var _ref5, _results1;
+          _ref5 = window.currentFile.results;
+          _results1 = [];
+          for (site in _ref5) {
+            result = _ref5[site];
+            if (!((result[prop] != null) && result[prop].toString().replace(window.EXTRA_WHITESPACE, '') !== '')) {
+              continue;
+            }
+            data = result[prop].toString().replace(window.PIXIV_LINK, '//www.pixiv.net/member_illust.php?mode=medium&illust_id=$2');
+            value = props[prop][data];
+            if (value != null) {
+              value += ", " + site;
+            } else {
+              value = site;
+            }
+            _results1.push(props[prop][data] = value);
+          }
+          return _results1;
+        })()).length > 0) {
+          tbody = make('tbody');
+          values = Object.keys(props[prop]);
+          switch (values.length) {
+            case 0:
+              continue;
+            case 1:
+              tbody.appendChild(make('tr', make('td', values[0].match(window.URI_SCHEME) != null ? make('a', {
+                target: '_blank',
+                href: values[0]
+              }, decodeURI(values[0])) : values[0])));
+              break;
+            default:
+              for (_l = 0, _len3 = values.length; _l < _len3; _l++) {
+                value = values[_l];
+                tbody.appendChild(make('tr', make('th', props[prop][value])));
+                tbody.appendChild(make('tr', make('td', value.match(window.URI_SCHEME) != null ? make('a', {
+                  target: '_blank',
+                  href: value
+                }, decodeURI(value)) : value)));
+              }
+          }
+          table.replaceChild(tbody, S(table, 'tbody'));
+          _results.push(window.show(table));
+        } else {
+          _results.push(table.classList.add('hide'));
+        }
+      }
+      return _results;
+    };
+    this.addThumbs = function(reset) {
+      var diff, thumbs, savedScroll = 0;
+      if (reset === true) {
+        S('#thumbs').innerHTML = '';
+        S('#topbar').scrollTo(0, 0);
+      } else if (reset === 'rebuild') {
+        savedScroll = S('#topbar').scrollLeft;
+        S('#thumbs').innerHTML = '';
+      }
+      
+      var currentThumbsLength = document.querySelectorAll('#thumbs .thumb').length;
+      diff = window.results.length - currentThumbsLength;
+      
+      if (diff > 0) {
+        thumbs = document.createDocumentFragment();
+        diff++;
+        while (diff -= 1) {
+          (function(i) {
+            var file;
+            file = window.files[window.results[i]];
+            return thumbs.appendChild(make('button', {
+              "class": 'thumb',
+              title: file.tags.join(' '),
+              'data-src': file.thumb
+            }, '<img>', {
+              events: {
+                click: function() {
+                  window.index = i;
+                  window.updateThumbs();
+                  return window.move(0);
+                }
+              }
+            }));
+          })(window.results.length - diff);
+        }
+        S('#thumbs').appendChild(thumbs);
+        
+        if (reset === 'rebuild') {
+           S('#topbar').scrollLeft = savedScroll;
+        }
+      }
+      return window.moreLock = false;
+    };
+    this.updateThumbs = function() {
+      if (window.index == null || isNaN(window.index)) return;
+      var end, i, previousThumb, start, thumb, _i, _ref1;
+      previousThumb = window.currentThumb;
+      window.currentThumb = S("#thumbs .thumb:nth-child(" + (window.index + 1) + ")");
+      if (window.currentThumb !== previousThumb) {
+        if (previousThumb != null) {
+          previousThumb.classList.remove('included');
+        }
+        if ((_ref1 = window.currentThumb) != null) {
+          _ref1.classList.add('included');
+        }
+      }
+      if (S('#topbar.hide') != null) {
+        return;
+      }
+      start = Math.floor(S("#topbar").scrollLeft / window.currentThumb.clientWidth);
+      end = Math.ceil(start + (S('#thumbs').clientWidth / window.currentThumb.clientWidth));
+      for (i = _i = start; start <= end ? _i <= end : _i >= end; i = start <= end ? ++_i : --_i) {
+        thumb = S('#thumbs').children[i];
+        if (thumb != null) {
+          thumb.firstChild.src = thumb.getAttribute('data-src');
+        }
+      }
+      if (window.moreLock === false && end === S('#thumbs').children.length - 1) {
+        window.moreLock = true;
+        return window.search();
+      }
+    };
+    this.updateResultsCounter = function() {
+      var site;
+      S('#current_index').innerHTML = thousands((window.index + 1 || 0).toString());
+      return S('#last_index').innerHTML = thousands(window.results.length.toString() + (((function() {
+        var _results;
+        _results = [];
+        for (site in window.moreResults) {
+          if (window.moreResults[site]) {
+            _results.push('+');
+          }
+        }
+        return _results;
+      })())[0] || ''));
+    };
+    this.addTag = function(tag, string) {
+      if (string == null) string = S('#search').value;
+      string = string.trim();
+      return string === '' ? tag : string + " " + tag;
+    };
+    
+    this.removeTag = function(tag, string) {
+      var isDefault = (string == null);
+      if (isDefault) string = S('#search').value;
+      
+      var cleanTag = window.regexEscape(tag);
+      var regex = new RegExp("(?=^|\\s)-?" + cleanTag + "\\s?|\\s?-?" + cleanTag + "(?=\\s|$)", 'gi');
+      
+      if (isDefault) {
+        if (S('#search_meta')) S('#search_meta').value = S('#search_meta').value.replace(regex, ' ').replace(/\s+/g, ' ').trim();
+        if (S('#search_exclude')) S('#search_exclude').value = S('#search_exclude').value.replace(regex, ' ').replace(/\s+/g, ' ').trim();
+      }
+      return string.replace(regex, ' ').replace(/\s+/g, ' ').trim();
+    };
+   return this.search = function(tags, reset) {
+      var excludedTags, page, searching, site, _fn, _i, _j, _len, _len1, _ref1;
+      
+      // 1. Process Main Input (and fix commas)
+      if (tags == null) tags = S('#search').value || '';
+      tags = tags.replace(/,/g, ' ').replace(/\s+/g, ' ').trim();
+      S('#search').value = tags; // Update ONLY the main UI box
+
+      // 2. Process Meta Input
+      var metaTags = (S('#search_meta').value || '').replace(/,/g, ' ').replace(/\s+/g, ' ').trim();
+
+      // 3. Process Exclude Input (Auto-prepend minus signs so user just types "guro")
+      var excRaw = (S('#search_exclude').value || '').replace(/,/g, ' ').replace(/\s+/g, ' ').trim();
+      var excludeTags = excRaw.split(/\s+/).map(function(t) {
+        return (t && t[0] !== '-') ? '-' + t : t;
+      }).join(' ').trim();
+
+      // 4. Combine them all for the backend
+      var combinedTags = [tags, metaTags, excludeTags].filter(Boolean).join(' ').trim();
+
+      searching = (function() {
+        var _results = [];
+        for (site in window.sites) {
+          if (window.sites[site].enabled) _results.push(site);
+        }
+        return _results;
+      })();
+      
+      window.reset = reset || combinedTags !== window.previousSearch;
+      window.previousSearch = combinedTags;
+      
+      window.includeTags = (function() {
+        var _i, _len, _ref1, _results;
+        _ref1 = window.getTags(combinedTags); // We parse the COMBINED tags here
+        _results = [];
+        for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+          var tag = _ref1[_i];
+          if (tag.match(/^-|^rating:\w+$/) === null) {
+            _results.push(tag);
+          }
+        }
+        return _results;
+      })();
+      window.resultsTotal = searching.length;
+      window.resultsDone = 0;
+      window.messageDelay = 0;
+      window.anyResults = false;
+      excludedTags = make('tbody');
+      _ref1 = window.getTags(combinedTags);
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        var tag = _ref1[_i];
+        if (tag[0] === '-') {
+          (function(tag, tagName) {
+            var _ref2;
+            return excludedTags.appendChild(make('tr', make('td', {
+              "class": 'tag-exclude'
+            }, make('button', '?', {
+              title: 'Stop excluding tag from current search'
+            }, {
+              events: {
+                click: function() {
+                  return window.search(window.removeTag(tag));
+                }
+              }
+            })), make('td', {
+              "class": 'tag-name excluded'
+            }, make('button', tagName.replace(/_/g, '<wbr>_'), {
+              title: 'Start new search with this tag'
+            }, {
+              events: {
+                click: function() {
+                  return window.search(tagName);
+                }
+              }
+            })), make('td', {
+              "class": 'tag-include'
+            }, make('button', '+', {
+              title: 'Add tag to current search'
+            }, {
+              events: {
+                click: function() {
+                  return window.search(S('#search').value.replace(tag, tagName));
+                }
+              }
+            })), make('td', {
+              "class": 'tag-total'
+            }, thousands(((_ref2 = window.tags[tagName]) != null ? _ref2.total : void 0) || 0))));
+          })(tag, tag.slice(1));
+        }
+      }
+      if (excludedTags.childElementCount > 0) {
+        window.requestAnimationFrame(function() {
+          S('#excluded_tags').replaceChild(excludedTags, S('#excluded_tags tbody'));
+          S('#excluded_tags').classList.remove('close');
+          return window.requestAnimationFrame(function() {
+            return S('#excluded_tags').classList.remove('hide');
+          });
+        });
+      } else {
+        S('#excluded_tags').classList.add('hide');
+      }
+      S('#messages').innerHTML = '';
+      S('#loading-results').style.width = '0';
+      S('#loading-results').classList.remove('error', 'info', 'warn');
+      if (window.reset) {
+        window.resultsPage = 0;
+        window.moreResults = {};
+        window.results = [];
+        window.loadingFile = true;
+        window.show('#loading-file', 'loadingFile', 'reset');
+      }
+      if (searching.length > 0) {
+        var baseTags = combinedTags + (function() {
+          switch (S('#highest_rating').value) {
+            case 'safe':
+              return ' rating:safe';
+            case 'questionable':
+              return ' -rating:explicit';
+            default:
+              return '';
+          }
+        })();
+        
+        var sortVal = S('#sort_order') ? S('#sort_order').value : 'default';
+        var dateFrom = S('#date_from') ? S('#date_from').value : '';
+        var dateTo = S('#date_to') ? S('#date_to').value : '';
+        
+        var minScoreActive = S('#min_score_active') ? S('#min_score_active').checked : false;
+        var minScoreText = S('#min_score') ? S('#min_score').value : '';
+        var minScore = (minScoreActive && minScoreText !== '') ? parseInt(minScoreText, 10) : NaN;
+
+        var minFavsActive = S('#min_favs_active') ? S('#min_favs_active').checked : false;
+        var minFavsText = S('#min_favs') ? S('#min_favs').value : '';
+        var minFavs = (minFavsActive && minFavsText !== '') ? parseInt(minFavsText, 10) : NaN;
+
+        page = window.resultsPage;
+        
+        _fn = function(site) {
+          var siteType = window.sites[site].type;
+          var siteTags = baseTags;
+          
+          // Server-Side Value Injections
+          // Only inject server-side filters for robust modern APIs (ouroboros/danbooru v2).
+          // Moebooru/Gelbooru/DanbooruV1 have strict anonymous tag limits (usually 2 to 4).
+          // Injecting extra tags here causes a 403 Forbidden error.
+          if (!isNaN(minScore)) {
+             if (siteType === 'e621' || siteType === 'ouroboros' || siteType === 'danbooru v2') {
+                siteTags += ' score:>=' + minScore;
+             }
+          }
+          if (!isNaN(minFavs)) {
+             if (siteType === 'e621' || siteType === 'ouroboros' || siteType === 'danbooru v2') {
+                siteTags += ' favcount:>=' + minFavs;
+             }
+          }
+
+          // Process Sort
+          if (sortVal !== 'default') {
+            if (siteType === 'e621' || siteType === 'ouroboros' || siteType === 'danbooru v2') {
+              siteTags += ' order:' + (sortVal === 'favorites' ? 'favcount' : 'score');
+            }
+          }
+
+          // Process Dates
+          if (dateFrom || dateTo) {
+            if (siteType === 'e621' || siteType === 'ouroboros' || siteType === 'danbooru v2') {
+              if (dateFrom && dateTo) {
+                 siteTags += ' date:' + dateFrom + '..' + dateTo;
+              } else if (dateFrom) {
+                 siteTags += ' date:>=' + dateFrom;
+              } else {
+                 siteTags += ' date:<=' + dateTo;
+              }
+            }
+          }
+
+          var _base2;
+          if ((_base2 = window.moreResults)[site] != null ? _base2[site] : _base2[site] = true) {
+            return window.getResults(window.apis[siteType], site, siteTags, page, 100, window.mergeResults);
+          } else {
+            return window.resultsTotal--;
+          }
+        };
+        for (_j = 0, _len1 = searching.length; _j < _len1; _j++) {
+          site = searching[_j];
+          _fn(site);
+        }
+        return window.resultsPage++;
+      } else {
+        window.loadingFile = false;
+        window.show('#loading-file', 'loadingFile', 'no sites');
+        window.showPanel('#settings', true);
+        return window.display('no sites');
+      }
+    };
+  })();
+})();</script></head><body>
+<!-- ==========================================================================
+     LANGUAGE: HTML (HyperText Markup Language)
+     FUNCTION: Application Structure & UI.
+               This is the skeleton of the interface. It defines the actual 
+               sidebar elements, tables, buttons, inputs, date pickers, and 
+               the spinning loading icon that the user interacts with.
+     ========================================================================== -->
+<div id="version-display">v1.405</div><div id="loading-file" class="center"><svg class="center" viewBox="0 0 32 32"><path fill="rgba(0,0,0,0.2)" stroke="rgba(0,0,0,0.8)" stroke-width="0.1px" d="M16 0 A16 16 0 0 0 16 32 A16 16 0 0 0 16 0 M16 4 A12 12 0 0 1 16 28 A12 12 0 0 1 16 4"></path></svg><svg class="center spin" viewBox="0 0 32 32"><path fill="white" d="M16 0 A16 16 0 0 1 32 16 L28 16 A12 12 0 0 0 16 4z"></path></svg><div id="loading-file-percent" class="center">Connecting...</div></div><div id="loading-results" class="hide" style="width: 0%"></div><div id="messages" class="frame fade-in-out hide"></div><div id="settings" class="frame hide"><button id="close_settings" title="Close settings">Settings</button><h1>Interface</h1><p><label for="interface_side">Display sidebar on the </label><select id="interface_side"><option value="left">left</option><option value="right">right</option></select></p><h1>Data Management</h1><div style="display: flex; gap: 0.5em; margin-bottom: 1em;"><button id="export_settings" style="flex: 1; padding: 0.5em; background-color: rgba(220,20,60,0.2); border-radius: 0.2em; font-weight: bold; cursor: pointer;">?? Export Config</button><button id="import_settings" style="flex: 1; padding: 0.5em; background-color: rgba(220,20,60,0.2); border-radius: 0.2em; font-weight: bold; cursor: pointer;">?? Import Config</button><input type="file" id="import_file" style="display: none;" accept=".json"></div><h1>Sites</h1><div id="third_party_site_disclaimer" class="fade-out"><h2>Third-party site disclaimer</h2><p class="text">The default image board in Razbooru is curated to only contain images that follow <a href="https://play.google.com/about/developer-content-policy.html" target="_blank">Google Play's Developer Content Policy</a>. Razbooru (like most web browsing applications) allows the user to enter the addresses of third-party websites outside of the application (or its developers) control. Razbooru contains a rating filter, but this relies upon how the websites themselves rate their content. Due to this the developers of Razbooru can not be held liable if content retrieved from third-party websites is offensive or illegal in your territory.</p><button id="third_party_site_disclaimer_dismiss">I understand, senpai.</button></div><div id="sites"><div id="new_site"><input id="new_site_address" type="url" placeholder="Add new site: example.com"></div></div></div><div id="sidebar" class="frame hide"><a id="info-version" href="http://zenbooru.org" target="_blank">Razbooru v1.405</a><button id="open_settings" title="Open settings">Settings</button><br /><br /><input id="search" type="search" placeholder="Search: tag_a tag_b tag_c"><input id="search_meta" type="search" placeholder="Meta: user:bob rating:safe"><input id="search_exclude" type="search" placeholder="Exclude: guro scat"><p><label for="highest_rating">Highest Rating: </label><select id="highest_rating"><option value="explicit">Explicit</option><option value="questionable">Questionable</option><option value="safe" selected="selected">Safe</option></select></p><p><label for="sort_order">Sort By: </label><select id="sort_order"><option value="default" selected="selected">Date Uploaded</option><option value="score">Score</option><option value="favorites">Favorites</option></select></p>
+
+<p style="margin-bottom: 0;"><label>Filters (Check to Enable): </label></p>
+<div style="display: flex; flex-direction: row; gap: 0.5em; justify-content: center; align-items: center; margin-bottom: 0.5em;">
+    <div style="background-color: rgba(0,0,0,0.6); border-radius: 0.2em; padding: 0.2em 0.5em; display: flex; align-items: center;">
+        <input type="checkbox" id="min_score_active" class="native-check" style="margin-right: 0.5em;">
+        <label for="min_score" style="font-size: 80%;">Score: </label>
+        <input id="min_score" type="number" style="width: 3.5em; background: none; box-shadow: none; padding: 0; margin-left: 0.2em;" placeholder="50">
+    </div>
+    <div style="background-color: rgba(0,0,0,0.6); border-radius: 0.2em; padding: 0.2em 0.5em; display: flex; align-items: center;">
+        <input type="checkbox" id="min_favs_active" class="native-check" style="margin-right: 0.5em;">
+        <label for="min_favs" style="font-size: 80%;">Favs: </label>
+        <input id="min_favs" type="number" style="width: 3.5em; background: none; box-shadow: none; padding: 0; margin-left: 0.2em;" placeholder="10">
+    </div>
+</div>
+
+<p><label>Date Range (Upload): </label><br><input id="date_from" type="date" style="width:45%; margin-right: 2%; background-color: rgba(0,0,0,0.6); color: white;" title="From Date"><input id="date_to" type="date" style="width:45%; background-color: rgba(0,0,0,0.6); color: white;" title="To Date"></p><button id="apply_search" style="width: 100%; margin-bottom: 0.5em; padding: 0.5em; background-color: rgba(220,20,60,0.2); border-radius: 0.2em; font-weight: bold; cursor: pointer;">?? Apply Search / Filters</button><table id="excluded_tags" class="fade-in-out hide close"><thead><tr><th id="excluded_tags-name" colspan="3">Excluded Tags</th><th id="excluded_tags-total">Total</th></tr></thead><tbody class="fade-in-out"></tbody></table><p id="results-counter" class="fade-in-out hide close"><span id="current_index">0</span> of <span id="last_index">0</span><br /><button id="go_to_first" title="Return to the first result in the current search">|&lt; Return to start</button><br /><button id="go_previous" title="Go back to the previous result in the current search">&lt;&lt; Backwards</button><button id="go_next" title="Go to the next result in the current search">Forwards &gt;&gt;</button></p><table id="results-score" class="fade-in-out hide close"><thead><tr><th>Score</th></tr></thead><tbody></tbody></table><table id="results-favorites" class="fade-in-out hide close"><thead><tr><th>Favorites</th></tr></thead><tbody></tbody></table><p><a id="save_file" class="fade-in-out hide close" href="" title="Open a file dialog to save the current file permantly" download="true" target="_blank" style="display: block; width: 100%; padding: 0.5em; box-sizing: border-box; background-color: rgba(0,0,0,0.6); border-radius: 0.2em; box-shadow: inset 0 0 1em rgba(0,0,0,0.2), 0 0 0.25em rgba(255,255,255,0.2); font-weight: bold; text-align: center;">Save as...</a></p><table id="display-options" class="fade-in-out hide close"><thead><tr><th colspan="2">Display options</th></tr></thead><tbody><tr><th><label for="display-file">Viewing: </label></th><td><select id="display-file"><option value="original" selected="selected">Original</option><option value="sample">Sample</option><option value="video">Video</option></select><button id="display-file-default" class="fade-in-out hide close">Set as default</button></td></tr><tr><th><label for="display-background">Background: </label></th><td><select id="display-background"><option value="transparent" selected="selected">Transparent</option><option value="white">White</option><option value="black">Black</option></select></td></tr><tr><td id="display-filters" colspan="2"><button id="display-scaling" data-title-false="Use nearest neighbour scaling to preserve crisp edges (ideal for pixel art)." data-text-false="Sharp scaling" data-title-true="Use smooth scaling to keep images looking smooth and realistic (ideal for paintings or photos)." data-text-true="Smooth scaling"></button><button id="display-invert" data-title-false="Invert the current image's colours." data-text-false="Invert" data-title-true="Return the current image to its original colours" data-text-true="Uninvert"></button><button id="display-notes" disabled="disabled" data-title-false="Hide any visible notes." data-text-false="Hide notes" data-title-true="Show any visible notes." data-text-true="Show notes"></button></td></tr></tbody></table><table id="tags" class="fade-in-out hide close"><thead><tr><th id="tags-name" colspan="3">Tags</th><th id="tags-total">Total</th></tr></thead><tbody></tbody></table><table id="results-site" class="fade-in-out hide close"><thead><tr><th>Sites</th></tr></thead><tbody></tbody></table><table id="results-source" class="fade-in-out hide close"><thead><tr><th>Source</th></tr></thead><tbody></tbody></table><table id="results-uploaded" class="fade-in-out hide close"><thead><tr><th>Uploaded</th></tr></thead><tbody></tbody></table><table id="results-notes" class="fade-in-out hide close"><thead><tr><th colspan="2">Notes</th></tr></thead><tbody></tbody></table></div><div class="view"></div><div id="topbar" class="frame top hide"><div id="thumbs"></div></div></body></html>
