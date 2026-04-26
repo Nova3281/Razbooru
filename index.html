@@ -15,7 +15,7 @@
   Original Zenbooru components remain under the MIT License.
   ========================================================================== 
 -->
-<meta name="referrer" content="no-referrer"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"><title>Loading... | v1.407</title><link rel="shortcut icon" href="data:,"><style>
+<meta name="referrer" content="no-referrer"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"><title>Loading... | v1.411</title><link rel="shortcut icon" href="data:,"><style>
 /* ==========================================================================
    LANGUAGE: CSS (Cascading Style Sheets)
    FUNCTION: This section controls the visual appearance of the application. 
@@ -641,6 +641,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   pointer-events: auto;
   transition: 0.3s ease-in-out;
   transition-property: -webkit-filter, filter, background-color, image-rendering;
+}
+.view:not(.natural) .content {
   max-width: 100vw;
   max-height: 100vh;
   object-fit: contain;
@@ -654,11 +656,15 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   width: 100vw;
 }
 .view.natural {
-  overflow: hidden;
+  overflow: auto;
 }
 .view.natural * {
   position: absolute;
   margin: 0;
+}
+.view.natural .content {
+  max-width: none;
+  max-height: none;
 }
 .view.natural .tall {
   margin: 0 auto;
@@ -957,7 +963,7 @@ this.S = function(a, b) {
       var currentVersion = localStorage.getItem('version');
       
       // SMART MIGRATION: Upgrades sites but securely preserves API keys!
-      if (currentVersion !== '4') {
+      if (currentVersion !== '1.411') {
           console.log("?? Upgrading Master Server List & Migrating Keys...");
           var newSites = masterConfig;
           for (var site in currentSites) {
@@ -970,7 +976,7 @@ this.S = function(a, b) {
               }
           }
           localStorage.setItem('sites', JSON.stringify(newSites));
-          localStorage.setItem('version', '4'); 
+          localStorage.setItem('version', '1.411'); 
           location.reload(); 
       }
       // --- END INJECTOR ---
@@ -1228,6 +1234,8 @@ this.S = function(a, b) {
           source: (post.sources && post.sources.length > 0) ? post.sources[0] : void 0,
           uploader: post.uploader_id,
           created: new Date(post.created_at),
+          score: post.score ? post.score.total : void 0,
+          favorites: post.fav_count,
           height: post.file ? post.file.height : void 0,
           width: post.file ? post.file.width : void 0,
           page: post.id != null ? "/posts/" + post.id : void 0,
@@ -1866,7 +1874,7 @@ this.S = function(a, b) {
                  sidebars, and preferences from the browser's `localStorage` 
                  and applies them to the current session.
        ========================================================================== */
-    this.SETTINGSVERSION = '4';
+    this.SETTINGSVERSION = '1.411';
     action(window, 'load', function() {
       window.loadSettings();
       action('#open_settings', 'click', function() {
@@ -2575,7 +2583,6 @@ this.getBlob = function(url, callbacks) {
     };
     this.display = function(error) {
       var content, i, notes, oldviews, subtype, type, view, _ref1;
-      window.loadingFile = false;
       oldviews = document.querySelectorAll('.view');
       
       if ((error != null) === false && this.status === 200) {
@@ -2584,6 +2591,7 @@ this.getBlob = function(url, callbacks) {
         
         // 1. TRAP HTML PAGES: If a server returns an HTML page instead of media, it's a dead link.
         if (mimeType.indexOf('html') !== -1) {
+             window.loadingFile = false;
              return window.display("Dead Link (Server returned HTML instead of media)");
         }
 
@@ -2616,6 +2624,10 @@ this.getBlob = function(url, callbacks) {
           isVideo: isVideo
         });
         
+        // --- ADDED UI NOTIFICATIONS ---
+        S('#loading-file-percent').innerHTML = isVideo ? 'Buffering Video...' : 'Processing...';
+        if (isVideo) window.show('#loading-file', 'loadingFile');
+
         var directUrl = this.responseURL || (window.currentFile ? window.currentFile.original : '');
         var blobUrl = window.URL.createObjectURL(this.response);
         
@@ -2630,6 +2642,7 @@ this.getBlob = function(url, callbacks) {
                 src: blobUrl, 
                 events: {
                   error: function() {
+                    window.loadingFile = false;
                     window.debugMedia('video:error', {
                       src: this.currentSrc || this.src,
                       readyState: this.readyState,
@@ -2666,6 +2679,7 @@ this.getBlob = function(url, callbacks) {
                     this.removeEventListener('canplaythrough', onCanPlayThrough);
                     view.classList.remove('hide');
                     clearTimeout(window.loadTimer);
+                    window.loadingFile = false;
                     return window.show('#loading-file', 'loadingFile');
                   }
                 }
@@ -2676,6 +2690,7 @@ this.getBlob = function(url, callbacks) {
                 src: blobUrl,
                 events: {
                   error: function() {
+                    window.loadingFile = false;
                     if (this.src.slice(0, 5) === 'blob:') {
                       window.debugMedia('image:error:blob', {
                         src: this.src,
@@ -2703,6 +2718,7 @@ this.getBlob = function(url, callbacks) {
                     window.aspect();
                     view.classList.remove('hide');
                     clearTimeout(window.loadTimer);
+                    window.loadingFile = false;
                     return window.show('#loading-file', 'loadingFile');
                   }
                 }
@@ -2710,6 +2726,7 @@ this.getBlob = function(url, callbacks) {
             default:
               nextFrame(function() {
                 view.classList.remove('hide');
+                window.loadingFile = false;
                 return window.show('#loading-file', 'loadingFile');
               });
               return make('div', { "class": 'center' }, mimeType + "<br>I don't know how to display this file ??<br>You can try saving and opening this file in another application to view it");
@@ -2745,6 +2762,7 @@ this.getBlob = function(url, callbacks) {
         S('link[rel="shortcut icon"]').href = S('#save_file').download = '';
         nextFrame(function() {
           view.classList.remove('hide');
+          window.loadingFile = false;
           return window.show('#loading-file', 'loadingFile');
         });
       }
@@ -2980,7 +2998,7 @@ this.getBlob = function(url, callbacks) {
         }
         return _results;
       })())[0] || '', (counter + more) + " " + (window.currentFile.checksum || 'Loading...') + " [" + (window.contentZoom || 100) + "%]") : "No results...";
-      return document.title = baseTitle + " | v1.407";
+      return document.title = baseTitle + " | v1.411";
     };
     this.updateInfo = function() {
       var data, has_notes, id, prop, props, result, site, tagsBody, url, value, values, xhr, _fn, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref1, _ref2, _ref3, _ref4, _results;
@@ -3458,7 +3476,7 @@ this.getBlob = function(url, callbacks) {
                sidebar elements, tables, buttons, inputs, date pickers, and 
                the spinning loading icon that the user interacts with.
      ========================================================================== -->
-<div id="version-display">v1.407</div><div id="loading-file" class="center"><svg class="center" viewBox="0 0 32 32"><path fill="rgba(0,0,0,0.2)" stroke="rgba(0,0,0,0.8)" stroke-width="0.1px" d="M16 0 A16 16 0 0 0 16 32 A16 16 0 0 0 16 0 M16 4 A12 12 0 0 1 16 28 A12 12 0 0 1 16 4"></path></svg><svg class="center spin" viewBox="0 0 32 32"><path fill="white" d="M16 0 A16 16 0 0 1 32 16 L28 16 A12 12 0 0 0 16 4z"></path></svg><div id="loading-file-percent" class="center">Connecting...</div></div><div id="loading-results" class="hide" style="width: 0%"></div><div id="messages" class="frame fade-in-out hide"></div><div id="settings" class="frame hide"><button id="close_settings" title="Close settings">Settings</button><h1>Interface</h1><p><label for="interface_side">Display sidebar on the </label><select id="interface_side"><option value="left">left</option><option value="right">right</option></select></p><h1>Data Management</h1><div style="display: flex; gap: 0.5em; margin-bottom: 1em;"><button id="export_settings" style="flex: 1; padding: 0.5em; background-color: rgba(220,20,60,0.2); border-radius: 0.2em; font-weight: bold; cursor: pointer;">?? Export Config</button><button id="import_settings" style="flex: 1; padding: 0.5em; background-color: rgba(220,20,60,0.2); border-radius: 0.2em; font-weight: bold; cursor: pointer;">?? Import Config</button><input type="file" id="import_file" style="display: none;" accept=".json"></div><h1>Sites</h1><div id="third_party_site_disclaimer" class="fade-out"><h2>Third-party site disclaimer</h2><p class="text">The default image board in Razbooru is curated to only contain images that follow <a href="https://play.google.com/about/developer-content-policy.html" target="_blank">Google Play's Developer Content Policy</a>. Razbooru (like most web browsing applications) allows the user to enter the addresses of third-party websites outside of the application (or its developers) control. Razbooru contains a rating filter, but this relies upon how the websites themselves rate their content. Due to this the developers of Razbooru can not be held liable if content retrieved from third-party websites is offensive or illegal in your territory.</p><button id="third_party_site_disclaimer_dismiss">I understand, senpai.</button></div><div id="sites"></div></div><div id="sidebar" class="frame hide"><a id="info-version" href="http://zenbooru.org" target="_blank">Razbooru v1.407</a><button id="open_settings" title="Open settings">Settings</button><br /><br /><input id="search" type="search" placeholder="Search: tag_a tag_b tag_c"><input id="search_meta" type="search" placeholder="Meta: user:bob rating:safe"><input id="search_exclude" type="search" placeholder="Exclude: guro scat"><p><label for="highest_rating">Highest Rating: </label><select id="highest_rating"><option value="explicit">Explicit</option><option value="questionable">Questionable</option><option value="safe" selected="selected">Safe</option></select></p><p><label for="sort_order">Sort By: </label><select id="sort_order"><option value="default" selected="selected">Date Uploaded</option><option value="score">Score</option><option value="favorites">Favorites</option></select></p>
+<div id="version-display">v1.411</div><div id="loading-file" class="center"><svg class="center" viewBox="0 0 32 32"><path fill="rgba(0,0,0,0.2)" stroke="rgba(0,0,0,0.8)" stroke-width="0.1px" d="M16 0 A16 16 0 0 0 16 32 A16 16 0 0 0 16 0 M16 4 A12 12 0 0 1 16 28 A12 12 0 0 1 16 4"></path></svg><svg class="center spin" viewBox="0 0 32 32"><path fill="white" d="M16 0 A16 16 0 0 1 32 16 L28 16 A12 12 0 0 0 16 4z"></path></svg><div id="loading-file-percent" class="center">Connecting...</div></div><div id="loading-results" class="hide" style="width: 0%"></div><div id="messages" class="frame fade-in-out hide"></div><div id="settings" class="frame hide"><button id="close_settings" title="Close settings">Settings</button><h1>Interface</h1><p><label for="interface_side">Display sidebar on the </label><select id="interface_side"><option value="left">left</option><option value="right">right</option></select></p><h1>Data Management</h1><div style="display: flex; gap: 0.5em; margin-bottom: 1em;"><button id="export_settings" style="flex: 1; padding: 0.5em; background-color: rgba(220,20,60,0.2); border-radius: 0.2em; font-weight: bold; cursor: pointer;">?? Export Config</button><button id="import_settings" style="flex: 1; padding: 0.5em; background-color: rgba(220,20,60,0.2); border-radius: 0.2em; font-weight: bold; cursor: pointer;">?? Import Config</button><input type="file" id="import_file" style="display: none;" accept=".json"></div><h1>Sites</h1><div id="third_party_site_disclaimer" class="fade-out"><h2>Third-party site disclaimer</h2><p class="text">The default image board in Razbooru is curated to only contain images that follow <a href="https://play.google.com/about/developer-content-policy.html" target="_blank">Google Play's Developer Content Policy</a>. Razbooru (like most web browsing applications) allows the user to enter the addresses of third-party websites outside of the application (or its developers) control. Razbooru contains a rating filter, but this relies upon how the websites themselves rate their content. Due to this the developers of Razbooru can not be held liable if content retrieved from third-party websites is offensive or illegal in your territory.</p><button id="third_party_site_disclaimer_dismiss">I understand, senpai.</button></div><div id="sites"></div></div><div id="sidebar" class="frame hide"><a id="info-version" href="http://zenbooru.org" target="_blank">Razbooru v1.411</a><button id="open_settings" title="Open settings">Settings</button><br /><br /><input id="search" type="search" placeholder="Search: tag_a tag_b tag_c"><input id="search_meta" type="search" placeholder="Meta: user:bob rating:safe"><input id="search_exclude" type="search" placeholder="Exclude: guro scat"><p><label for="highest_rating">Highest Rating: </label><select id="highest_rating"><option value="explicit">Explicit</option><option value="questionable">Questionable</option><option value="safe" selected="selected">Safe</option></select></p><p><label for="sort_order">Sort By: </label><select id="sort_order"><option value="default" selected="selected">Date Uploaded</option><option value="score">Score</option><option value="favorites">Favorites</option></select></p>
 
 <p style="margin-bottom: 0;"><label>Filters (Check to Enable): </label></p>
 <div style="display: flex; flex-direction: row; gap: 0.5em; justify-content: center; align-items: center; margin-bottom: 0.5em;">
@@ -3474,4 +3492,4 @@ this.getBlob = function(url, callbacks) {
     </div>
 </div>
 
-<p><label>Date Range (Upload): </label><br><input id="date_from" type="date" style="width:45%; margin-right: 2%; background-color: rgba(0,0,0,0.6); color: white;" title="From Date"><input id="date_to" type="date" style="width:45%; background-color: rgba(0,0,0,0.6); color: white;" title="To Date"></p><button id="apply_search" style="width: 100%; margin-bottom: 0.5em; padding: 0.5em; background-color: rgba(220,20,60,0.2); border-radius: 0.2em; font-weight: bold; cursor: pointer;">?? Apply Search / Filters</button><table id="excluded_tags" class="fade-in-out hide close"><thead><tr><th id="excluded_tags-name" colspan="3">Excluded Tags</th><th id="excluded_tags-total">Total</th></tr></thead><tbody class="fade-in-out"></tbody></table><p id="results-counter" class="fade-in-out hide close"><span id="current_index">0</span> of <span id="last_index">0</span><br /><button id="go_to_first" title="Return to the first result in the current search">|&lt; Return to start</button><br /><button id="go_previous" title="Go back to the previous result in the current search">&lt;&lt; Backwards</button><button id="go_next" title="Go to the next result in the current search">Forwards &gt;&gt;</button></p><table id="results-score" class="fade-in-out hide close"><thead><tr><th>Score</th></tr></thead><tbody></tbody></table><table id="results-favorites" class="fade-in-out hide close"><thead><tr><th>Favorites</th></tr></thead><tbody></tbody></table><p><a id="save_file" class="fade-in-out hide close" href="" title="Open a file dialog to save the current file permantly" download="true" target="_blank" style="display: block; width: 100%; padding: 0.5em; box-sizing: border-box; background-color: rgba(220,20,60,0.2); border-radius: 0.2em; box-shadow: inset 0 0 1em rgba(0,0,0,0.2), 0 0 0.25em rgba(255,255,255,0.2); font-weight: bold; text-align: center;">Save as...</a></p><table id="display-options" class="fade-in-out hide close"><thead><tr><th colspan="2">Display options</th></tr></thead><tbody><tr><th><label for="display-file">Viewing: </label></th><td><select id="display-file"><option value="original" selected="selected">Original</option><option value="sample">Sample</option><option value="video">Video</option></select><button id="display-file-default" class="fade-in-out hide close">Set as default</button></td></tr><tr><th><label for="display-background">Background: </label></th><td><select id="display-background"><option value="transparent" selected="selected">Transparent</option><option value="white">White</option><option value="black">Black</option></select></td></tr><tr><td id="display-filters" colspan="2"><button id="display-scaling" data-title-false="Use nearest neighbour scaling to preserve crisp edges (ideal for pixel art)." data-text-false="Sharp scaling" data-title-true="Use smooth scaling to keep images looking smooth and realistic (ideal for paintings or photos)." data-text-true="Smooth scaling"></button><button id="display-invert" data-title-false="Invert the current image's colours." data-text-false="Invert" data-title-true="Return the current image to its original colours" data-text-true="Uninvert"></button><button id="display-notes" disabled="disabled" data-title-false="Hide any visible notes." data-text-false="Hide notes" data-title-true="Show any visible notes." data-text-true="Show notes"></button></td></tr></tbody></table><table id="tags" class="fade-in-out hide close"><thead><tr><th id="tags-name" colspan="3">Tags</th><th id="tags-total">Total</th></tr></thead><tbody></tbody></table><table id="results-site" class="fade-in-out hide close"><thead><tr><th>Sites</th></tr></thead><tbody></tbody></table><table id="results-source" class="fade-in-out hide close"><thead><tr><th>Source</th></tr></thead><tbody></tbody></table><table id="results-uploaded" class="fade-in-out hide close"><thead><tr><th>Uploaded</th></tr></thead><tbody></tbody></table><table id="results-notes" class="fade-in-out hide close"><thead><tr><th colspan="2">Notes</th></tr></thead><tbody></tbody></table></div><div class="view"></div><div id="topbar" class="frame top hide"><div id="thumbs"></div></div></body></html>
+<p><label>Date Range (Upload): </label><br><input id="date_from" type="date" style="width:45%; margin-right: 2%; background-color: rgba(0,0,0,0.6); color: white;" title="From Date"><input id="date_to" type="date" style="width:45%; background-color: rgba(0,0,0,0.6); color: white;" title="To Date"></p><button id="apply_search" style="width: 100%; margin-bottom: 0.5em; padding: 0.5em; background-color: rgba(220,20,60,0.2); border-radius: 0.2em; font-weight: bold; cursor: pointer;">?? Apply Search / Filters</button><table id="excluded_tags" class="fade-in-out hide close"><thead><tr><th id="excluded_tags-name" colspan="3">Excluded Tags</th><th id="excluded_tags-total">Total</th></tr></thead><tbody class="fade-in-out"></tbody></table><p id="results-counter" class="fade-in-out hide close"><span id="current_index">0</span> of <span id="last_index">0</span><br /><button id="go_to_first" title="Return to the first result in the current search">|&lt; Return to start</button><br /><button id="go_previous" title="Go back to the previous result in the current search">&lt;&lt; Backwards</button><button id="go_next" title="Go to the next result in the current search">Forwards &gt;&gt;</button></p><div style="display: flex; gap: 0.5em; align-items: flex-start; width: 100%; margin-bottom: 0.5em;"><table id="results-score" class="fade-in-out hide close" style="margin: 0; flex: 1;"><thead><tr><th>Score</th></tr></thead><tbody></tbody></table><table id="results-favorites" class="fade-in-out hide close" style="margin: 0; flex: 1;"><thead><tr><th>Favorites</th></tr></thead><tbody></tbody></table></div><table id="results-site" class="fade-in-out hide close" style="margin-bottom: 0.5em;"><thead><tr><th>Site</th></tr></thead><tbody></tbody></table><p><a id="save_file" class="fade-in-out hide close" href="" title="Open a file dialog to save the current file permantly" download="true" target="_blank" style="display: block; width: 100%; padding: 0.5em; box-sizing: border-box; background-color: rgba(220,20,60,0.2); border-radius: 0.2em; box-shadow: inset 0 0 1em rgba(0,0,0,0.2), 0 0 0.25em rgba(255,255,255,0.2); font-weight: bold; text-align: center;">Save as...</a></p><table id="display-options" class="fade-in-out hide close"><thead><tr><th colspan="2">Display options</th></tr></thead><tbody><tr><th><label for="display-file">Viewing: </label></th><td><select id="display-file"><option value="original" selected="selected">Original</option><option value="sample">Sample</option><option value="video">Video</option></select><button id="display-file-default" class="fade-in-out hide close">Set as default</button></td></tr><tr><th><label for="display-background">Background: </label></th><td><select id="display-background"><option value="transparent" selected="selected">Transparent</option><option value="white">White</option><option value="black">Black</option></select></td></tr><tr><td id="display-filters" colspan="2"><button id="display-scaling" data-title-false="Use nearest neighbour scaling to preserve crisp edges (ideal for pixel art)." data-text-false="Sharp scaling" data-title-true="Use smooth scaling to keep images looking smooth and realistic (ideal for paintings or photos)." data-text-true="Smooth scaling"></button><button id="display-invert" data-title-false="Invert the current image's colours." data-text-false="Invert" data-title-true="Return the current image to its original colours" data-text-true="Uninvert"></button><button id="display-notes" disabled="disabled" data-title-false="Hide any visible notes." data-text-false="Hide notes" data-title-true="Show any visible notes." data-text-true="Show notes"></button></td></tr></tbody></table><table id="tags" class="fade-in-out hide close"><thead><tr><th id="tags-name" colspan="3">Tags</th><th id="tags-total">Total</th></tr></thead><tbody></tbody></table><table id="results-source" class="fade-in-out hide close"><thead><tr><th>Source</th></tr></thead><tbody></tbody></table><table id="results-uploaded" class="fade-in-out hide close"><thead><tr><th>Uploaded</th></tr></thead><tbody></tbody></table><table id="results-notes" class="fade-in-out hide close"><thead><tr><th colspan="2">Notes</th></tr></thead><tbody></tbody></table></div><div class="view"></div><div id="topbar" class="frame top hide"><div id="thumbs"></div></div></body></html>

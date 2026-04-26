@@ -1,0 +1,9 @@
+1.409 
+Implimented version file.
+Made it so favorites and score stay shown at all times.  Added the site information just below that so you know where it came from.
+Fixed display issue for number of favorites for ourboroos sites.
+1.410
+Made it so that when a video is loading there is an indicator.
+Made it so there is a note for when video is decoding.
+1.411
+Fixed Zoom issues and made sure you can scroll.
